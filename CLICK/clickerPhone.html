@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Простой кликер</title>
+<style>
+* {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently supported by Chrome, Opera and Firefox */
+    touch-action: manipulation; /* CSS property to disable pinch-zooming */
+}
+body {
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 70vh;
+	background-position: center 20vh;
+	background-color: black;
+}
+#fatigue-bar-container {
+    position: fixed;
+    top: 5%; /* Расстояние от нижнего края окна просмотра */
+    left: 30%; /* Расстояние от левого края окна просмотра */
+    width: 40%;
+    height: 0.5%;
+    border: 2px solid #4b4f01;
+	border-radius: 13px;
+    display: flex;
+    align-items: center;
+}
+
+#fatigue-bar {
+    background-color: #a0a368;
+    height: 100%; /* Высота внутри контейнера */
+    width: 100%; /* Начальная ширина 100% */
+    transition: width 0.25s ease-out; /* Плавное изменение ширины */
+	border-radius: 7px; 
+}
+
+#experience-bar-container {
+    position: fixed;
+    top: 2%; /* Расстояние от нижнего края окна просмотра */
+    left: 30%; /* Расстояние от левого края окна просмотра */
+    width: 40%;
+    height: 0.5%;
+    border: 2px solid #7b828c;
+	border-radius: 13px;
+    display: flex;
+    align-items: center;
+}
+
+#experience-bar {
+    background-color: #99a1ad;
+    height: 100%; /* Высота внутри контейнера */
+    width: 100%; /* Начальная ширина 100% */
+    transition: width 0.25s ease-out; /* Плавное изменение ширины */
+	border-radius: 7px; 
+}
+
+#experience-info p {
+    position: fixed;
+    top: -1vh;
+    left: 2vh;
+    width: 10%;
+    text-align: left;
+    color: #ffffff;
+    font-size: 2.5vh;
+}
+#experience-amount {
+	color: #ffffff; /* Цвет текста */
+    font-size: 100%;
+}
+
+#energy-info p {
+    position: absolute;
+    top: 2.4vh;
+    right: 10vw;
+    width: 20%;
+    text-align: center;
+    color: #ffffff;
+    font-size: 2vh;
+}
+#energy-points {
+	color: #ffffff; /* Цвет текста */
+    font-size: 100%;
+}
+
+#XP-info p {
+    position: absolute;
+    top: -0.5vh;
+    right: 10vw;
+    width: 20%;
+    text-align: center;
+    color: #ffffff;
+    font-size: 2vh;
+}
+#XP-points {
+	color: #ffffff; /* Цвет текста */
+    font-size: 100%;
+}
+
+#boxer {
+    z-index: 0;
+    position: absolute;
+    height: 60vh;
+    width: 100vw;
+    left: 0%;
+    bottom: 7%;
+}
+
+#slogan .slogan-link {
+    z-index: 3;
+    display: block; /* Чтобы ссылка занимала весь блок */
+    width: 60vw;
+    top: 17vh;
+    left: 20vw;
+    position: absolute;
+    text-align: center;
+    text-decoration: none; /* Убираем подчеркивание ссылки */
+    color: #a0a368; /* Цвет текста */
+}
+
+#slogan .slogan-link p {
+    font-size: 5vh;
+    font-weight: bold;
+    margin: 0; /* Убираем стандартные отступы у `<p>` */
+    cursor: pointer; /* Курсор в виде указателя для наведения */
+}
+
+#clickCount {
+    visibility: hidden;
+}
+
+#boxer.enlarge {
+    transform: scale(1.2); /* Увеличиваем размер на 20% */
+    transition: transform 0.2s ease;
+}
+#bottom-bar {
+    position: absolute;
+    left: -0.4vw;
+    bottom: 0;
+    width: 100vw;
+    height: 6vh;
+    background-color: #1c1c1c;
+    border: 2px solid #000000;
+    border-radius: 13px 13px 0 0;
+}
+
+
+.button {
+    position: absolute;
+    display: inline-block;
+    width: 23.5vw; /* Устанавливаем ширину кнопок */
+    height: 5vh; /* Устанавливаем высоту кнопок */
+    background-color: #212121; /* Цвет фона кнопок */
+	background-size: 30%; /* Масштабируем изображения до 70% от размера кнопки */
+    background-repeat: no-repeat;
+    background-position: center center; /* Центрирование изображения */
+    border-radius: 15%; /* Делаем кнопки круглыми */
+    transition: background-color 0.3s, box-shadow 0.3s; /* Плавное изменение фона и тени */
+    cursor: pointer; /* Стиль курсора при наведении */
+}
+
+.button:hover, .button:focus {
+    background-color: #171717; /* Изменение цвета фона при наведении */
+}
+
+.button:active {
+    background-color: #0d0d0d; /* Изменение цвета фона при нажатии */
+}
+
+#youtube {
+	bottom: 0.5vh;
+	left: 1.2vw;
+	background-image: url('CLICK/youtube.png');
+}
+#telegram {
+	bottom: 0.5vh;
+	left: 25.9vw;
+	background-image: url('CLICK/telegram.png');
+}
+#X {
+	bottom: 0.5vh;
+	left: 50.6vw;
+	background-image: url('CLICK/x.png');
+}
+#web {
+	bottom: 0.5vh;
+	left: 75.3vw;
+	background-image: url('CLICK/web.png');
+}
+
+</style>
+</head>
+<body>
+<div class="clicker-game">
+    <img src="CLICK/backhq.jpg" id="boxer" alt="Boxer">
+	<span id="clickCount">0</span>
+</div>
+<div id="slogan">
+    <a href="https://example.com" target="_blank" rel="noopener noreferrer" class="slogan-link">
+        <p><i>Nahren bednost</i></p>
+    </a>
+</div>
+<div id="fatigue-bar-container">
+    <div id="fatigue-bar"></div>
+</div>
+<div id="experience-bar-container">
+    <div id="experience-bar"></div>
+</div>
+<div id="experience-info">
+    <p>: <span id="experience-amount">0</span></p>
+</div>
+<div id="energy-info">
+    <p>  : <span id="energy-points">0</span>/100</p>
+</div>
+<div id="XP-info">
+    <p>XP: <span id="XP-points">0</span>/10</p>
+</div>
+<div id="bottom-bar"></div>
+<a href="https://example.com/link1" id="youtube" class="button" target="_blank" rel="noopener noreferrer"></a>
+<a href="https://example.com/link2" id="X" class="button" target="_blank" rel="noopener noreferrer"></a>
+<a href="https://example.com/link3" id="web" class="button" target="_blank" rel="noopener noreferrer"></a>
+<a href="https://example.com/link4" id="telegram" class="button" target="_blank" rel="noopener noreferrer"></a>
+
+
+<script>
+let count = 0; // Счетчик кликов
+let fatigueLevel = 100; // Начальный уровень усталости
+const totalParts = 100; // Количество частей на шкале
+let experienceLevel = 0; // Начальный уровень опыта
+const maxExperience = 10; // Максимальное количество делений на шкале
+let experienceAmount = 0;
+
+
+function increaseCount() {
+    if (fatigueLevel > 0) { // Увеличиваем счетчик только если есть усталость
+        count++;
+        document.getElementById('clickCount').innerText = count; // Обновляем отображаемое значение счетчика
+        decreaseFatigue(); // Уменьшаем уровень усталости при каждом клике
+    }
+}
+
+function increaseExperience() {
+    experienceLevel++;
+    if (experienceLevel >= maxExperience) {
+        experienceLevel = 0;
+        experienceAmount++;
+        document.getElementById('experience-amount').innerText = experienceAmount;
+    }
+    updateExperienceBar();
+    document.getElementById('XP-points').innerText = experienceLevel; // Обновляем текущее количество делений
+}
+
+function updateExperienceBar() {
+    const experienceBar = document.getElementById('experience-bar');
+    experienceBar.style.width = `${experienceLevel / maxExperience * 100}%`; // Расчет ширины наполнения
+}
+function updateExperienceAmount() {
+    const experienceAmountSpan = document.getElementById('experience-amount');
+    experienceAmountSpan.innerText = experienceAmount;
+}
+
+function decreaseFatigue() {
+    if (fatigueLevel > 0) {
+        fatigueLevel--; // Уменьшаем уровень усталости на одну часть
+        updateFatigueBar();
+    }
+}
+
+function updateFatigueBar() {
+    const fatigueBar = document.getElementById('fatigue-bar');
+    fatigueBar.style.width = `${fatigueLevel / totalParts * 100}%`;
+    document.getElementById('energy-points').innerText = fatigueLevel; // Обновляем текущее количество делений
+}
+
+setInterval(() => {
+    if (fatigueLevel < totalParts) {
+        fatigueLevel++;
+        updateFatigueBar();
+    }
+}, 3000);  // Каждые 3000 мс (3 секунды)
+
+document.getElementById('boxer').addEventListener('click', function() {
+    if (fatigueLevel > 0) { // Условие, если у вас есть шкала усталости
+        increaseCount();
+        increaseExperience(); // Вызов увеличения опыта
+    }
+});
+
+document.getElementById('boxer').addEventListener('click', function() {
+    this.classList.add('enlarge');
+    setTimeout(() => {
+        this.classList.remove('enlarge');
+    }, 100);
+});
+
+window.addEventListener('dblclick', function(event) {
+    event.preventDefault();
+}, { passive: false });
+
+document.addEventListener('selectstart', function(event) {
+    event.preventDefault();
+}, false);
+
+
+</script>
+
+</body>
+</html>
