@@ -67,6 +67,6 @@ app.get('/load-game', (req, res) => {
 });
 
 // Запуск сервера
-app.listen(port, () => {
-    console.log(`Сервер запущен на http://localhost:${port}`);
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Сервер запущен на http://0.0.0.0:${port}`);
 });
