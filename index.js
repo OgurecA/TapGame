@@ -6,7 +6,12 @@ const app = express();
 const cors = require('cors');
 const port = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(cors({
+    origin: '*', // Разрешает запросы с любого домена
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Разрешает эти методы
+    allowedHeaders: ['Content-Type', 'Authorization'] // Разрешает эти заголовки
+}));
+
 app.use(express.static('CLICK'));
 app.use(express.json());
 
@@ -39,6 +44,7 @@ app.get('/', (req, res) => {
 
 // API для сохранения игры
 app.post('/save-game', (req, res) => {
+    console.log(req.body); // Выводит полученные данные в консоль сервера
     const { telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount } = req.body;
     const query = `REPLACE INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, ?, ?, ?, ?)`;
     db.run(query, [telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount], function(err) {
@@ -50,6 +56,7 @@ app.post('/save-game', (req, res) => {
         }
     });
 });
+
 
 // API для загрузки игры
 app.get('/load-game', (req, res) => {
