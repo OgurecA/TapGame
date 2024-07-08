@@ -44,8 +44,8 @@ app.get('/', (req, res) => {
 
 // API для сохранения игры
 app.post('/save-game', (req, res) => {
-    console.log(req.body); // Выводит полученные данные в консоль сервера
     const { telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount } = req.body;
+    console.log("Получен запрос на сохранение для пользователя:", telegramId); // Логирование telegramId
     const query = `REPLACE INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, ?, ?, ?, ?)`;
     db.run(query, [telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount], function(err) {
         if (err) {
@@ -57,10 +57,10 @@ app.post('/save-game', (req, res) => {
     });
 });
 
-
 // API для загрузки игры
 app.get('/load-game', (req, res) => {
     const { telegramId } = req.query;
+    console.log("Получен запрос на загрузку для пользователя:", telegramId); // Логирование telegramId
     db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
         if (err) {
             console.error('Ошибка при загрузке данных:', err);
@@ -72,6 +72,7 @@ app.get('/load-game', (req, res) => {
         }
     });
 });
+
 
 // Запуск сервера
 app.listen(port, '0.0.0.0', () => {
