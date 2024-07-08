@@ -12,8 +12,32 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'] // Разрешает эти заголовки
 }));
 
+
+const corsOptions = {
+    origin: 'https://boxinglab.online/', // Замените это на ваш действительный источник
+    optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 app.use(express.static('CLICK'));
 app.use(express.json());
+
+
+// Предположим, что вы получаете данные пользователя так
+telegram.WebApp.ready(() => {
+    const telegramId = telegram.WebApp.initDataUnsafe.user.id;
+    fetch('http://localhost:3000/save-game', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ telegramId: telegramId, ...otherData })
+    })
+    .then(response => response.json())
+    .then(data => console.log('Server response:', data))
+    .catch(error => console.error('Error:', error));
+});
+
+
 
 // Подключение и создание таблицы в базе данных SQLite
 const db = new sqlite3.Database('./clickerGame.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
@@ -44,6 +68,7 @@ app.get('/', (req, res) => {
 
 // API для сохранения игры
 app.post('/save-game', (req, res) => {
+    console.log('Received data:', req.body);
     const { telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount } = req.body;
     console.log("Получен запрос на сохранение для пользователя:", telegramId); // Логирование telegramId
     const query = `REPLACE INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, ?, ?, ?, ?)`;
