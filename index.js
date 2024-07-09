@@ -56,7 +56,7 @@ app.post('/register-user', (req, res) => {
     });
 });
 
-app.get('/user/:telegramId', (req, res) => {
+app.get('/:telegramId', (req, res) => {
     const telegramId = req.params.telegramId;
     db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
         if (err) {
