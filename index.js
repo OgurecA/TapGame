@@ -25,7 +25,7 @@ const db = new sqlite3.Database('./clickerGame.db', sqlite3.OPEN_READWRITE | sql
         db.run(`CREATE TABLE IF NOT EXISTS users (
             telegramId TEXT PRIMARY KEY,
             clickCount INTEGER DEFAULT 0,
-            fatigueLevel INTEGER DEFAULT 0,
+            fatigueLevel INTEGER DEFAULT 100,
             experienceLevel INTEGER DEFAULT 0,
             experienceAmount INTEGER DEFAULT 0
         )`, (err) => {
@@ -38,24 +38,6 @@ const db = new sqlite3.Database('./clickerGame.db', sqlite3.OPEN_READWRITE | sql
     }
 });
 
-app.post('/register-user', (req, res) => {
-    const { telegramId } = req.body;
-    db.get(`SELECT telegramId FROM users WHERE telegramId = ?`, [telegramId], function(err, row) {
-        if (err) {
-            return res.status(500).json({ error: 'Database error' });
-        }
-        if (row) {
-            return res.status(200).json({ status: 'already_registered' });
-        } else {
-            db.run(`INSERT INTO users (telegramId) VALUES (?)`, [telegramId], function(err) {
-                if (err) {
-                    return res.status(500).json({ error: 'Failed to register user' });
-                }
-                res.json({ status: 'registered', telegramId });
-            });
-        }
-    });
-});
 
 // Этот маршрут теперь будет отправлять HTML страницу, если найдет пользователя
 app.get('/:telegramId', (req, res) => {
@@ -69,7 +51,7 @@ app.get('/:telegramId', (req, res) => {
             res.sendFile(path.join(__dirname, 'CLICK', 'clicker.html')); // Отправляем HTML файл
         } else {
             // Пользователь не найден, создаем новую запись с начальными данными
-            db.run(`INSERT INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, 0, 0, 0, 0)`,
+            db.run(`INSERT INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, 0, 100, 0, 0)`,
             [telegramId], function(err) {
                 if (err) {
                     console.error('Ошибка при регистрации нового пользователя:', err);
@@ -84,7 +66,7 @@ app.get('/:telegramId', (req, res) => {
 
 
 // Загрузка данных игры для конкретного пользователя
-app.get('/load-game/:telegramId', (req, res) => {
+app.get('/:telegramId', (req, res) => {
     const telegramId = req.params.telegramId;
     db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
         if (err) {

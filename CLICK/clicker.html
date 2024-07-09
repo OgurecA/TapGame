@@ -261,7 +261,7 @@ const telegramId = window.location.pathname.split('/')[1]; // Получение
 document.addEventListener('DOMContentLoaded', async () => {
     const telegramId = window.location.pathname.slice(1); // Получение ID пользователя из URL
     try {
-        const response = await fetch(`/load-game/${telegramId}`); // Убедитесь, что ваш серверный маршрут настроен правильно
+        const response = await fetch(`/${telegramId}`); // Убедитесь, что ваш серверный маршрут настроен правильно
         const data = await response.json();
         if (data && data.clickCount !== undefined) {
             count = data.clickCount;
@@ -359,7 +359,7 @@ setInterval(async () => {
             experienceLevel: experienceLevel,
             experienceAmount: experienceAmount
         });
-        const response = await fetch(`/save-game/${telegramId}`, {
+        const response = await fetch(`/${telegramId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
