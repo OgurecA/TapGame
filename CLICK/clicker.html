@@ -260,7 +260,7 @@ const telegramId = window.location.pathname.split('/')[1]; // Получение
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const response = await fetch(`/load-game/${telegramId}`);
+        const response = await fetch(`/user/${telegramId}`);
         const data = await response.json();
         if (data && data.clickCount !== undefined) {
             count = data.clickCount;
