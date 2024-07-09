@@ -37,8 +37,6 @@ const db = new sqlite3.Database('./clickerGame.db', sqlite3.OPEN_READWRITE | sql
     }
 });
 
-// Этот код предполагает, что вы уже имеете подключение к базе данных `db`
-
 app.post('/register-user', (req, res) => {
     const { telegramId } = req.body;
     db.get(`SELECT telegramId FROM users WHERE telegramId = ?`, [telegramId], function(err, row) {
@@ -58,28 +56,29 @@ app.post('/register-user', (req, res) => {
     });
 });
 
-
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/CLICK/clicker.html');
-});
-
-app.post('/save-game', (req, res) => {
-    const { telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount } = req.body;
-    console.log("Saving game data for:", telegramId);
-    const query = `REPLACE INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, ?, ?, ?, ?)`;
-    db.run(query, [telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount], function(err) {
+app.get('/user/:telegramId', (req, res) => {
+    const telegramId = req.params.telegramId;
+    db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
         if (err) {
-            console.error('Ошибка при сохранении данных:', err);
-            res.status(500).json({ message: 'Ошибка при сохранении данных', error: err.message });
+            return res.status(500).json({ error: 'Database error', details: err.message });
+        }
+        if (row) {
+            res.json(row);
         } else {
-            res.json({ message: 'Прогресс сохранен', data: req.body });
+            db.run(`INSERT INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, 0, 0, 0, 0)`, 
+            [telegramId], function(err) {
+                if (err) {
+                    return res.status(500).json({ error: 'Failed to register user', details: err.message });
+                }
+                res.status(201).json({ telegramId, clickCount: 0, fatigueLevel: 0, experienceLevel: 0, experienceAmount: 0 });
+            });
         }
     });
 });
 
-
-app.get('/load-game', (req, res) => {
-    const { telegramId } = req.query;
+// Загрузка данных игры для конкретного пользователя
+app.get('/load-game/:telegramId', (req, res) => {
+    const telegramId = req.params.telegramId;
     db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
         if (err) {
             console.error('Ошибка при загрузке данных:', err);
