@@ -256,44 +256,28 @@ let experienceLevel = 0; // Начальный уровень опыта
 const maxExperience = 10; // Максимальное количество делений на шкале
 let experienceAmount = 0;
 
-async src="https://telegram.org/js/telegram-widget.js?7" data-telegram-login="ABoogieWoogieBot" data-size="large" data-radius="10" data-auth-url="https://boxonglab.online/" data-request-access="write">
-
-
 document.addEventListener('DOMContentLoaded', async () => {
-            const apiUrl = 'https://boxinglab.online'; // Замените на ваш реальный домен
-            try {
-                const telegramId = 'your-telegram-id'; // Необходимо получить этот ID от бота или как-то иначе
-
-                // Загрузка игры
-                const loadResponse = await fetch(`${apiUrl}/load-game?telegramId=${telegramId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                const loadData = await loadResponse.json();
-                console.log('Loaded game data:', loadData);
-
-                // Пример отправки сохраненной игры
-                const saveResponse = await fetch(`${apiUrl}/save-game`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        telegramId: telegramId,
-                        clickCount: 5,
-                        fatigueLevel: 2,
-                        experienceLevel: 3,
-                        experienceAmount: 150
-                    })
-                });
-                const saveData = await saveResponse.json();
-                console.log('Saved game data:', saveData);
-            } catch (error) {
-                console.error('Error with game data operations:', error);
-            }
-        });
+    try {
+        const response = await fetch('/load-game');
+        const data = await response.json();
+        if (data && data.clickCount !== undefined) {
+            count = data.clickCount;
+            fatigueLevel = data.fatigueLevel;
+            experienceLevel = data.experienceLevel;
+            experienceAmount = data.experienceAmount;
+            document.getElementById('clickCount').innerText = count;
+            updateExperienceBar();
+            updateFatigueBar();
+            updateExperienceAmount();
+            document.getElementById('XP-points').innerText = experienceLevel;
+            document.getElementById('energy-points').innerText = fatigueLevel;
+            document.getElementById('experience-amount').innerText = experienceAmount;
+        }
+        console.log('Прогресс загружен:', data);
+    } catch (error) {
+        console.error('Ошибка загрузки данных:', error);
+    }
+});
 
 
 function increaseCount() {
