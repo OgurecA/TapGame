@@ -37,6 +37,18 @@ const db = new sqlite3.Database('./clickerGame.db', sqlite3.OPEN_READWRITE | sql
     }
 });
 
+app.post('/register-user', (req, res) => {
+    const { telegramId } = req.body;
+    // Здесь вы можете сохранить user_id в базу данных
+    db.run(`INSERT INTO users (telegramId) VALUES (?)`, [telegramId], function(err) {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.json({ message: 'User registered successfully', telegramId });
+    });
+});
+
+
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/CLICK/clicker.html');
 });

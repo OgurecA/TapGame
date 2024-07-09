@@ -3,8 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Простой кликер</title>
+<title>BoxingLab</title>
 <style>
+@font-face {
+    font-family: 'GraffitiFont';
+    src: url('Fonts/brushed.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'StatsFont';
+    src: url('Fonts/DIEDIEDI.ttf') format('truetype');
+}
+
 * {
     -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
@@ -23,9 +33,9 @@ body {
 }
 #fatigue-bar-container {
     position: fixed;
-    top: 5%; /* Расстояние от нижнего края окна просмотра */
-    left: 30%; /* Расстояние от левого края окна просмотра */
-    width: 40%;
+    top: 5vh; /* Расстояние от нижнего края окна просмотра */
+    left: 30vw; /* Расстояние от левого края окна просмотра */
+    width: 40vw;
     height: 0.5%;
     border: 2px solid #4b4f01;
 	border-radius: 13px;
@@ -43,9 +53,9 @@ body {
 
 #experience-bar-container {
     position: fixed;
-    top: 2%; /* Расстояние от нижнего края окна просмотра */
-    left: 30%; /* Расстояние от левого края окна просмотра */
-    width: 40%;
+    top: 2vh; /* Расстояние от нижнего края окна просмотра */
+    left: 30vw; /* Расстояние от левого края окна просмотра */
+    width: 40vw;
     height: 0.5%;
     border: 2px solid #7b828c;
 	border-radius: 13px;
@@ -65,41 +75,44 @@ body {
     position: fixed;
     top: -1vh;
     left: 2vh;
-    width: 10%;
+    width: 10vw;
     text-align: left;
-    color: #ffffff;
+    color: #727478;
     font-size: 2.5vh;
+	font-family: 'StatsFont', sans-serif;
 }
 #experience-amount {
-	color: #ffffff; /* Цвет текста */
+	color: #727478; /* Цвет текста */
     font-size: 100%;
 }
 
 #energy-info p {
     position: absolute;
-    top: 2.4vh;
-    right: 10vw;
-    width: 20%;
+    top: 2vh;
+    right: 5vw;
+    width: 25vw;
     text-align: center;
-    color: #ffffff;
+    color: #727478;
     font-size: 2vh;
+	font-family: 'StatsFont', sans-serif;
 }
 #energy-points {
-	color: #ffffff; /* Цвет текста */
+	color: #727478; /* Цвет текста */
     font-size: 100%;
 }
 
 #XP-info p {
     position: absolute;
-    top: -0.5vh;
-    right: 10vw;
+    top: -1vh;
+    right: 7vw;
     width: 20%;
     text-align: center;
-    color: #ffffff;
+    color: #727478;
     font-size: 2vh;
+	font-family: 'StatsFont', sans-serif;
 }
 #XP-points {
-	color: #ffffff; /* Цвет текста */
+	color: #727478; /* Цвет текста */
     font-size: 100%;
 }
 
@@ -115,9 +128,9 @@ body {
 #slogan .slogan-link {
     z-index: 3;
     display: block; /* Чтобы ссылка занимала весь блок */
-    width: 60vw;
-    top: 17vh;
-    left: 20vw;
+    width: 90vw;
+    top: 12vh;
+    left: 5vw;
     position: absolute;
     text-align: center;
     text-decoration: none; /* Убираем подчеркивание ссылки */
@@ -125,10 +138,11 @@ body {
 }
 
 #slogan .slogan-link p {
-    font-size: 5vh;
+	font-family: 'GraffitiFont', sans-serif;
+    font-size: 4vh;
     font-weight: bold;
-    margin: 0; /* Убираем стандартные отступы у `<p>` */
-    cursor: pointer; /* Курсор в виде указателя для наведения */
+    margin: 0;
+    cursor: pointer; 
 }
 
 #clickCount {
@@ -154,7 +168,7 @@ body {
 .button {
     position: absolute;
     display: inline-block;
-    width: 23.5vw; /* Устанавливаем ширину кнопок */
+    width: 18.8vw; /* Устанавливаем ширину кнопок */
     height: 5vh; /* Устанавливаем высоту кнопок */
     background-color: #212121; /* Цвет фона кнопок */
 	background-size: 30%; /* Масштабируем изображения до 70% от размера кнопки */
@@ -175,30 +189,35 @@ body {
 
 #youtube {
 	bottom: 0.5vh;
-	left: 1.2vw;
-	background-image: url('CLICK/youtube.png');
+	left: 1vw;
+	background-image: url('youtube.png');
 }
 #telegram {
 	bottom: 0.5vh;
-	left: 25.9vw;
-	background-image: url('CLICK/telegram.png');
+	left: 20.8vw;
+	background-image: url('telegram.png');
 }
 #X {
 	bottom: 0.5vh;
-	left: 50.6vw;
-	background-image: url('CLICK/x.png');
+	left: 40.6vw;
+	background-image: url('X.png');
 }
 #web {
 	bottom: 0.5vh;
-	left: 75.3vw;
-	background-image: url('CLICK/web.png');
+	left: 60.4vw;
+	background-image: url('web.png');
+}
+#discord {
+	bottom: 0.5vh;
+	left: 80.2vw;
+	background-image: url('dc.png');
 }
 
 </style>
 </head>
 <body>
 <div class="clicker-game">
-    <img src="CLICK/backhq.jpg" id="boxer" alt="Boxer">
+    <img src="slim.jpg" id="boxer" alt="Boxer">
 	<span id="clickCount">0</span>
 </div>
 <div id="slogan">
@@ -213,10 +232,10 @@ body {
     <div id="experience-bar"></div>
 </div>
 <div id="experience-info">
-    <p>: <span id="experience-amount">0</span></p>
+    <p>Stats: <span id="experience-amount">0</span></p>
 </div>
 <div id="energy-info">
-    <p>  : <span id="energy-points">0</span>/100</p>
+    <p>E: <span id="energy-points">0</span>/100</p>
 </div>
 <div id="XP-info">
     <p>XP: <span id="XP-points">0</span>/10</p>
@@ -226,6 +245,7 @@ body {
 <a href="https://example.com/link2" id="X" class="button" target="_blank" rel="noopener noreferrer"></a>
 <a href="https://example.com/link3" id="web" class="button" target="_blank" rel="noopener noreferrer"></a>
 <a href="https://example.com/link4" id="telegram" class="button" target="_blank" rel="noopener noreferrer"></a>
+<a href="https://example.com/link4" id="discord" class="button" target="_blank" rel="noopener noreferrer"></a>
 
 
 <script>
@@ -235,6 +255,29 @@ const totalParts = 100; // Количество частей на шкале
 let experienceLevel = 0; // Начальный уровень опыта
 const maxExperience = 10; // Максимальное количество делений на шкале
 let experienceAmount = 0;
+
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const response = await fetch('/load-game');
+        const data = await response.json();
+        if (data && data.clickCount !== undefined) {
+            count = data.clickCount;
+            fatigueLevel = data.fatigueLevel;
+            experienceLevel = data.experienceLevel;
+            experienceAmount = data.experienceAmount;
+            document.getElementById('clickCount').innerText = count;
+            updateExperienceBar();
+            updateFatigueBar();
+            updateExperienceAmount();
+            document.getElementById('XP-points').innerText = experienceLevel;
+            document.getElementById('energy-points').innerText = fatigueLevel;
+            document.getElementById('experience-amount').innerText = experienceAmount;
+        }
+        console.log('Прогресс загружен:', data);
+    } catch (error) {
+        console.error('Ошибка загрузки данных:', error);
+    }
+});
 
 
 function increaseCount() {
@@ -307,8 +350,29 @@ document.addEventListener('selectstart', function(event) {
     event.preventDefault();
 }, false);
 
+setInterval(async () => {
+    try {
+        const body = JSON.stringify({
+            clickCount: count,
+            fatigueLevel: fatigueLevel,
+            experienceLevel: experienceLevel,
+            experienceAmount: experienceAmount
+        });
+        const response = await fetch('/save-game', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: body
+        });
+        const result = await response.json();
+        console.log('Прогресс сохранён:', result);
+    } catch (error) {
+        console.error('Ошибка сохранения данных:', error);
+    }
+}, 5000); // Сохраняем каждые 10 секунд
+
 
 </script>
-
 </body>
 </html>
