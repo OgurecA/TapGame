@@ -66,7 +66,7 @@ app.get('/:telegramId', (req, res) => {
             return res.status(500).json({ error: 'Database error' });
         }
         if (row) {
-            res.sendFile(path.join(__dirname, 'CLICK', 'index.html')); // Отправляем HTML файл
+            res.sendFile(path.join(__dirname, 'CLICK', 'clicker.html')); // Отправляем HTML файл
         } else {
             // Пользователь не найден, создаем новую запись с начальными данными
             db.run(`INSERT INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, 0, 0, 0, 0)`,
@@ -76,7 +76,7 @@ app.get('/:telegramId', (req, res) => {
                     return res.status(500).json({ error: 'Failed to register user' });
                 }
                 console.log('Новый пользователь зарегистрирован:', telegramId);
-                res.sendFile(path.join(__dirname, 'CLICK', 'index.html')); // Отправляем HTML файл после регистрации
+                res.sendFile(path.join(__dirname, 'CLICK', 'clicker.html')); // Отправляем HTML файл после регистрации
             });
         }
     });
