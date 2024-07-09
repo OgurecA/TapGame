@@ -39,14 +39,23 @@ const db = new sqlite3.Database('./clickerGame.db', sqlite3.OPEN_READWRITE | sql
 
 app.post('/register-user', (req, res) => {
     const { telegramId } = req.body;
-    // Здесь вы можете сохранить user_id в базу данных
-    db.run(`INSERT INTO users (telegramId) VALUES (?)`, [telegramId], function(err) {
+    db.get(`SELECT telegramId FROM users WHERE telegramId = ?`, [telegramId], function(err, row) {
         if (err) {
-            return res.status(500).json({ error: err.message });
+            return res.status(500).json({ error: 'Database error' });
         }
-        res.json({ message: 'User registered successfully', telegramId });
+        if (row) {
+            return res.status(200).json({ status: 'already_registered' });
+        } else {
+            db.run(`INSERT INTO users (telegramId) VALUES (?)`, [telegramId], function(err) {
+                if (err) {
+                    return res.status(500).json({ error: 'Failed to register user' });
+                }
+                res.json({ status: 'registered', telegramId });
+            });
+        }
     });
 });
+
 
 
 app.get('/', (req, res) => {
@@ -55,16 +64,18 @@ app.get('/', (req, res) => {
 
 app.post('/save-game', (req, res) => {
     const { telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount } = req.body;
+    console.log("Saving game data for:", telegramId);
     const query = `REPLACE INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, ?, ?, ?, ?)`;
     db.run(query, [telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount], function(err) {
         if (err) {
             console.error('Ошибка при сохранении данных:', err);
             res.status(500).json({ message: 'Ошибка при сохранении данных', error: err.message });
         } else {
-            res.json({ message: 'Прогресс сохранен' });
+            res.json({ message: 'Прогресс сохранен', data: req.body });
         }
     });
 });
+
 
 app.get('/load-game', (req, res) => {
     const { telegramId } = req.query;
