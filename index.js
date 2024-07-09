@@ -64,6 +64,21 @@ app.get('/:telegramId', (req, res) => {
     });
 });
 
+app.post('/:telegramId', (req, res) => {
+    const { telegramId } = req.params;
+    const { clickCount, fatigueLevel, experienceLevel, experienceAmount } = req.body;
+
+    // Обновление данных пользователя в базе данных
+    db.run(`UPDATE users SET clickCount = ?, fatigueLevel = ?, experienceLevel = ?, experienceAmount = ? WHERE telegramId = ?`,
+        [clickCount, fatigueLevel, experienceLevel, experienceAmount, telegramId], function(err) {
+            if (err) {
+                console.error('Ошибка при сохранении данных:', err);
+                return res.status(500).json({ error: 'Database error', details: err.message });
+            }
+            res.json({ message: 'Прогресс сохранен', telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount });
+        });
+});
+
 
 // Загрузка данных игры для конкретного пользователя
 app.get('/:telegramId', (req, res) => {
