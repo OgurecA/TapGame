@@ -259,8 +259,9 @@ const telegramId = window.location.pathname.split('/')[1]; // Получение
 
 
 document.addEventListener('DOMContentLoaded', async () => {
+    const telegramId = window.location.pathname.slice(1); // Получение ID пользователя из URL
     try {
-        const response = await fetch(`/${telegramId}`);
+        const response = await fetch(`/load-game/${telegramId}`); // Убедитесь, что ваш серверный маршрут настроен правильно
         const data = await response.json();
         if (data && data.clickCount !== undefined) {
             count = data.clickCount;
@@ -280,6 +281,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Ошибка загрузки данных:', error);
     }
 });
+
 
 
 function increaseCount() {

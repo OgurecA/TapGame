@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const axios = require('axios');
 const app = express();
 const cors = require('cors');
+const path = require('path');
 const port = process.env.PORT || 3000;
 
 app.use(cors({
@@ -56,25 +57,31 @@ app.post('/register-user', (req, res) => {
     });
 });
 
+// Этот маршрут теперь будет отправлять HTML страницу, если найдет пользователя
 app.get('/:telegramId', (req, res) => {
     const telegramId = req.params.telegramId;
     db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
         if (err) {
-            return res.status(500).json({ error: 'Database error', details: err.message });
+            console.error('Ошибка при запросе к базе данных:', err);
+            return res.status(500).json({ error: 'Database error' });
         }
         if (row) {
-            res.json(row);
+            res.sendFile(path.join(__dirname, 'CLICK', 'index.html')); // Отправляем HTML файл
         } else {
-            db.run(`INSERT INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, 0, 0, 0, 0)`, 
+            // Пользователь не найден, создаем новую запись с начальными данными
+            db.run(`INSERT INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, 0, 0, 0, 0)`,
             [telegramId], function(err) {
                 if (err) {
-                    return res.status(500).json({ error: 'Failed to register user', details: err.message });
+                    console.error('Ошибка при регистрации нового пользователя:', err);
+                    return res.status(500).json({ error: 'Failed to register user' });
                 }
-                res.status(201).json({ telegramId, clickCount: 0, fatigueLevel: 0, experienceLevel: 0, experienceAmount: 0 });
+                console.log('Новый пользователь зарегистрирован:', telegramId);
+                res.sendFile(path.join(__dirname, 'CLICK', 'index.html')); // Отправляем HTML файл после регистрации
             });
         }
     });
 });
+
 
 // Загрузка данных игры для конкретного пользователя
 app.get('/load-game/:telegramId', (req, res) => {
