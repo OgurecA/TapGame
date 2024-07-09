@@ -37,6 +37,8 @@ const db = new sqlite3.Database('./clickerGame.db', sqlite3.OPEN_READWRITE | sql
     }
 });
 
+// Этот код предполагает, что вы уже имеете подключение к базе данных `db`
+
 app.post('/register-user', (req, res) => {
     const { telegramId } = req.body;
     db.get(`SELECT telegramId FROM users WHERE telegramId = ?`, [telegramId], function(err, row) {
@@ -55,7 +57,6 @@ app.post('/register-user', (req, res) => {
         }
     });
 });
-
 
 
 app.get('/', (req, res) => {
@@ -91,23 +92,6 @@ app.get('/load-game', (req, res) => {
     });
 });
 
-app.post('/telegram-auth', (req, res) => {
-    if (checkTelegramAuthentication(req.body)) {
-        // Действия после успешной аутентификации
-        console.log('Аутентификация пользователя через Telegram прошла успешно:', req.body);
-        res.status(200).json({ message: 'Аутентификация успешна' });
-    } else {
-        res.status(401).json({ message: 'Ошибка аутентификации' });
-    }
-});
-
 app.listen(port, '0.0.0.0', () => {
     console.log(`Сервер запущен на http://0.0.0.0:${port}`);
 });
-
-function checkTelegramAuthentication(data) {
-  const secretKey = crypto.createHash('sha256').update(process.env.BOT_TOKEN).digest();
-  const checkString = Object.keys(data).filter(key => key !== 'hash').map(key => `${key}=${data[key]}`).sort().join('\n');
-  const hash = crypto.createHmac('sha256', secretKey).update(checkString).digest('hex');
-  return hash === data.hash;
-}
