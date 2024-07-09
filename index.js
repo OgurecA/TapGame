@@ -65,7 +65,7 @@ app.get('/:telegramId', (req, res) => {
 });
 
 app.post('/:telegramId', (req, res) => {
-    const { telegramId } = req.params;
+    const telegramId = req.params.telegramId
     const { clickCount, fatigueLevel, experienceLevel, experienceAmount } = req.body;
 
     // Обновление данных пользователя в базе данных
@@ -85,15 +85,18 @@ app.get('/:telegramId', (req, res) => {
     const telegramId = req.params.telegramId;
     db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
         if (err) {
-            console.error('Ошибка при загрузке данных:', err);
-            res.status(500).json({ message: 'Ошибка при загрузке данных', error: err.message });
-        } else if (row) {
-            res.json(row);
+            console.error('Ошибка при запросе к базе данных:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        if (row) {
+            res.json(row); // Отправляем данные пользователя
         } else {
-            res.status(404).json({ message: 'Прогресс не найден' });
+            // Если пользователь не найден, возможно, стоит вернуть сообщение об ошибке или статус 404
+            res.status(404).json({ message: 'Пользователь не найден' });
         }
     });
 });
+
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`Сервер запущен на http://0.0.0.0:${port}`);
