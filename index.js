@@ -7,8 +7,6 @@ const app = express();
 const cors = require('cors');
 const path = require('path');
 const port = process.env.PORT || 3000;
-const fs = require('fs');
-
 
 app.use(cors({
     origin: '*', // Разрешает запросы с любого домена
@@ -42,24 +40,6 @@ const db = new sqlite3.Database('./clickerGame.db', sqlite3.OPEN_READWRITE | sql
     }
 });
 
-// Загрузка данных игры для конкретного пользователя
-app.get('/:telegramId', (req, res) => {
-    const telegramId = req.params.telegramId;
-    db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
-        if (err) {
-            console.error('Ошибка при запросе к базе данных:', err);
-            res.status(500).send('Database error');
-            return;
-        }
-        if (!row) {
-            res.status(404).send('Пользователь не найден');
-            return;
-        }
-        const indexPath = path.join(__dirname, 'CLICK', 'clicker.html');
-        const htmlResponse = `<script>const initialData = ${JSON.stringify(row)};</script>` + fs.readFileSync(indexPath, 'utf8');
-        res.send(htmlResponse);
-    });
-});
 
 app.post('/:telegramId', (req, res) => {
     const telegramId = req.params.telegramId
@@ -104,6 +84,23 @@ app.get('/:telegramId', (req, res) => {
 });
 
 
+// Загрузка данных игры для конкретного пользователя
+app.get('/:telegramId', (req, res) => {
+    const telegramId = req.params.telegramId;
+    db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
+        if (err) {
+            console.error('Ошибка при запросе к базе данных:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        if (row) {
+            res.json(row); // Отправляем данные пользователя
+			res.sendFile(path.join(__dirname, 'CLICK', 'clicker.html')); // Отправляем HTML
+        } else {
+            // Если пользователь не найден, возможно, стоит вернуть сообщение об ошибке или статус 404
+            res.status(404).json({ message: 'Пользователь не найден' });
+        }
+    });
+});
 
 
 app.listen(port, '0.0.0.0', () => {
