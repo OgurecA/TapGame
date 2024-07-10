@@ -80,7 +80,7 @@ app.post('/save/:telegramId', (req, res) => {
 
 
 // Этот маршрут теперь будет отправлять HTML страницу, если найдет пользователя
-app.get('к/:telegramId', (req, res) => {
+app.get('/:telegramId', (req, res) => {
     const telegramId = req.params.telegramId;
     db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
         if (row) {
@@ -110,7 +110,7 @@ app.get('/load/:telegramId', (req, res) => {
         if (row) {
             // Пользователь найден, перенаправляем на страницу с игрой
 			console.log(`Данные найдены для Telegram ID: ${telegramId}`);
-            res.json(row);
+            res.sendFile(path.join(__dirname, 'CLICK', 'clicker.html'));
         } else {
             // Пользователь не найден, регистрируем и перенаправляем
             db.run(`INSERT INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, 0, 100, 0, 0)`,
@@ -118,8 +118,9 @@ app.get('/load/:telegramId', (req, res) => {
                 if (err) {
                     console.error('Ошибка при регистрации нового пользователя:', err);
                     return res.status(500).send('Failed to register user');
-                }
-                res.redirect(`/load/${telegramId}`);
+                } else {
+					res.redirect(`/load/${telegramId}`);
+				}
             });
         }
     });
