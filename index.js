@@ -8,6 +8,7 @@ const cors = require('cors');
 const path = require('path');
 const port = process.env.PORT || 3000;
 const fs = require('fs'); // Добавьте эту строку в начало файла
+const indexPath = path.join(__dirname, 'CLICK', 'clicker.html');
 
 
 app.use(cors({
