@@ -56,8 +56,10 @@ function getUserData(telegramId, callback) {
 }
 
 app.post('/:telegramId', (req, res) => {
+    console.log('Получен POST запрос для:', req.params.telegramId); // Логирование при получении запроса
     const telegramId = req.params.telegramId;
     const { clickCount, fatigueLevel, experienceLevel, experienceAmount } = req.body;
+    console.log('Данные для обновления:', req.body); // Логирование полученных данных
 
     db.run(
         `UPDATE users SET clickCount = ?, fatigueLevel = ?, experienceLevel = ?, experienceAmount = ? WHERE telegramId = ?`,
@@ -67,10 +69,12 @@ app.post('/:telegramId', (req, res) => {
                 console.error('Ошибка при обновлении данных пользователя:', err);
                 return res.status(500).json({ error: 'Database error' });
             }
+            console.log('Прогресс для пользователя', telegramId, 'был успешно обновлен'); // Логирование успешного обновления
             res.json({ message: 'Прогресс сохранен', telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount });
         }
     );
 });
+
 
 
 // Этот маршрут теперь будет отправлять HTML страницу, если найдет пользователя
