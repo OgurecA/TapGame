@@ -83,17 +83,23 @@ app.post('/:telegramId', (req, res) => {
 app.get('/:telegramId', (req, res) => {
     const telegramId = req.params.telegramId;
     db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
-        if (err) {
-            console.error('Ошибка при запросе к базе данных:', err);
-            return res.status(500).send('Database error');
-        }
-        if (!row) {
-            return res.status(404).send('Пользователь не найден');
+        if (row) {
+            console.log(`Пользователь подключен: ${telegramId}`);
+            console.log(`Статы пользователя: 
+                ClickCount: ${row.clickCount},
+                FatigueLevel: ${row.fatigueLevel},
+                ExperienceLevel: ${row.experienceLevel},
+                ExperienceAmount: ${row.experienceAmount}`);
+            res.json(row); // Отправляем данные пользователя
+        } else {
+            console.log(`Пользователь ${telegramId} не найден.`);
+            res.status(404).json({ message: 'Пользователь не найден' });
         }
         // Отправляем файл HTML с встроенными данными
         const indexPath = path.join(__dirname, 'CLICK', 'clicker.html');
         const htmlResponse = `<script>const initialData = ${JSON.stringify(row)};</script>` + fs.readFileSync(indexPath, 'utf8');
         res.send(htmlResponse);
+		
     });
 });
 
