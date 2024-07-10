@@ -93,7 +93,7 @@ app.get('/:telegramId', (req, res) => {
         } else {
             console.log(`Пользователь ${telegramId} не найден.`);
             res.status(404).json({ message: 'Пользователь не найден' });
-			res.redirect(`/load/${telegramId}`);
+			res.redirect(`/${telegramId}`);
         }
     });
 });
@@ -110,7 +110,6 @@ app.get('/load/:telegramId', (req, res) => {
         if (row) {
             // Пользователь найден, перенаправляем на страницу с игрой
 			console.log(`Данные найдены для Telegram ID: ${telegramId}`);
-            res.json(row);
         } else {
             // Пользователь не найден, регистрируем и перенаправляем
             db.run(`INSERT INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, 0, 100, 0, 0)`,
