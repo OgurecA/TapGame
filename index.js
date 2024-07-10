@@ -67,7 +67,7 @@ app.get('/:telegramId', (req, res) => {
     });
 });
 
-app.post('к/:telegramId', (req, res) => {
+app.post('/:telegramId', (req, res) => {
     const telegramId = req.params.telegramId
     const { clickCount, fatigueLevel, experienceLevel, experienceAmount } = req.body;
 
@@ -84,7 +84,7 @@ app.post('к/:telegramId', (req, res) => {
 
 
 // Загрузка данных игры для конкретного пользователя
-app.get('к/:telegramId', (req, res) => {
+app.get('/:telegramId', (req, res) => {
     const telegramId = req.params.telegramId;
     db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
         if (err) {
