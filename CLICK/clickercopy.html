@@ -258,35 +258,25 @@ let experienceAmount = 0;
 const telegramId = window.location.pathname.split('/')[1]; // Получение ID из URL
 
 
-document.addEventListener('DOMContentLoaded', async () => {
-    const telegramId = window.location.pathname.split('/')[1]; // Получение ID пользователя из URL
-    const url = `/${telegramId}`;
-    console.log("Запрос к URL:", url); // Добавьте эту строку для проверки URL
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof initialData !== 'undefined') {
+        const { clickCount, fatigueLevel, experienceLevel, experienceAmount } = initialData;
+        // Инициализация игры с полученными данными
+        count = clickCount;
+        fatigueLevel = fatigueLevel;
+        experienceLevel = experienceLevel;
+        experienceAmount = experienceAmount;
 
-        if (data) {
-            // Используем полученные данные для инициализации состояния игры
-            initializeGameState(data);
-        } else {
-            console.log('Данные пользователя не найдены.');
-        }
-    } catch (error) {
-        console.error('Ошибка при загрузке данных пользователя:', error);
+        document.getElementById('clickCount').innerText = count;
+        updateExperienceBar();
+        updateFatigueBar();
+        updateExperienceAmount();
+        document.getElementById('XP-points').innerText = experienceLevel;
+        document.getElementById('energy-points').innerText = fatigueLevel;
+        document.getElementById('experience-amount').innerText = experienceAmount;
     }
 });
 
-
-function initializeGameState(data) {
-    // Здесь ваш код для инициализации состояния игры
-    document.getElementById('clickCount').innerText = data.clickCount;
-    document.getElementById('XP-points').innerText = data.experienceLevel;
-    document.getElementById('energy-points').innerText = data.fatigueLevel;
-    document.getElementById('experience-amount').innerText = data.experienceAmount;
-    updateExperienceBar(data.experienceLevel);
-    updateFatigueBar(data.fatigueLevel);
-}
 
 
 function increaseCount() {

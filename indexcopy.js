@@ -7,6 +7,8 @@ const app = express();
 const cors = require('cors');
 const path = require('path');
 const port = process.env.PORT || 3000;
+const fs = require('fs'); // Добавьте эту строку в начало файла
+
 
 app.use(cors({
     origin: '*', // Разрешает запросы с любого домена
@@ -81,41 +83,47 @@ app.post('/:telegramId', (req, res) => {
 app.get('/:telegramId', (req, res) => {
     const telegramId = req.params.telegramId;
     db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
-        if (err) {
-            console.error('Ошибка при запросе к базе данных:', err);
-            return res.status(500).json({ error: 'Database error' });
-        }
         if (row) {
-            res.sendFile(path.join(__dirname, 'CLICK', 'clicker.html')); // Отправляем HTML файл
-			console.log('Пользователь подключен:', telegramId);
+            console.log(`Пользователь подключен: ${telegramId}`);
+            console.log(`Статы пользователя: 
+                ClickCount: ${row.clickCount},
+                FatigueLevel: ${row.fatigueLevel},
+                ExperienceLevel: ${row.experienceLevel},
+                ExperienceAmount: ${row.experienceAmount}`);
         } else {
-            // Пользователь не найден, создаем новую запись с начальными данными
-            db.run(`INSERT INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, 0, 100, 0, 0)`,
-            [telegramId], function(err) {
-                if (err) {
-                    console.error('Ошибка при регистрации нового пользователя:', err);
-                    return res.status(500).json({ error: 'Failed to register user' });
-                }
-                console.log('Новый пользователь зарегистрирован:', telegramId);
-                res.sendFile(path.join(__dirname, 'CLICK', 'clicker.html')); // Отправляем HTML файл после регистрации
-            });
+            console.log(`Пользователь ${telegramId} не найден.`);
+            res.status(404).json({ message: 'Пользователь не найден' });
+			res.redirect(`/load/${telegramId}`);
         }
     });
 });
 
 
 // Загрузка данных игры для конкретного пользователя
-app.get('/:telegramId', (req, res) => {
+app.get('/load/:telegramId', (req, res) => {
     const telegramId = req.params.telegramId;
+	const indexPath = path.join(__dirname, 'CLICK', 'clicker.html');
     db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
         if (err) {
             console.error('Ошибка при запросе к базе данных:', err);
-            return res.status(500).json({ error: 'Database error' });
+            return res.status(500).send('Database error');
         }
-        if (!row) {
-            return res.status(404).json({ message: 'Пользователь не найден' });
+        if (row) {
+            // Пользователь найден, перенаправляем на страницу с игрой
+			console.log(`Данные найдены, отправка HTML для Telegram ID: ${telegramId}`);
+			const htmlResponse = `<script>const initialData = ${JSON.stringify(row)};</script>` + fs.readFileSync(indexPath, 'utf8');
+			res.send(htmlResponse);
+        } else {
+            // Пользователь не найден, регистрируем и перенаправляем
+            db.run(`INSERT INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, 0, 100, 0, 0)`,
+            [telegramId], function(err) {
+                if (err) {
+                    console.error('Ошибка при регистрации нового пользователя:', err);
+                    return res.status(500).send('Failed to register user');
+                }
+                res.redirect(`/load/${telegramId}`);
+            });
         }
-        res.json(row); // Отправляем данные пользователя
     });
 });
 

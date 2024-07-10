@@ -258,24 +258,36 @@ let experienceAmount = 0;
 const telegramId = window.location.pathname.split('/')[1]; // Получение ID из URL
 
 
-document.addEventListener('DOMContentLoaded', () => {
-    if (typeof initialData !== 'undefined') {
-        const { clickCount, fatigueLevel, experienceLevel, experienceAmount } = initialData;
-        // Инициализация игры с полученными данными
-        count = clickCount;
-        fatigueLevel = fatigueLevel;
-        experienceLevel = experienceLevel;
-        experienceAmount = experienceAmount;
-
-        document.getElementById('clickCount').innerText = count;
-        updateExperienceBar();
-        updateFatigueBar();
-        updateExperienceAmount();
-        document.getElementById('XP-points').innerText = experienceLevel;
-        document.getElementById('energy-points').innerText = fatigueLevel;
-        document.getElementById('experience-amount').innerText = experienceAmount;
-    }
+document.addEventListener('DOMContentLoaded', function() {
+    const telegramId = window.location.pathname.split('/')[1]; // Предполагается, что ID находится в URL
+    loadGameData(telegramId);
 });
+
+function loadGameData(telegramId) {
+    fetch(`/load/${telegramId}`)  // AJAX запрос к серверу с идентификатором пользователя
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data) {
+                // Обновление пользовательского интерфейса с новыми данными
+                document.getElementById('clickCount').innerText = data.clickCount;
+                document.getElementById('fatigue-bar').style.width = `${data.fatigueLevel}%`;
+                document.getElementById('experience-bar').style.width = `${(data.experienceLevel / maxExperience) * 100}%`;
+                document.getElementById('XP-points').innerText = data.experienceLevel;
+                document.getElementById('energy-points').innerText = data.fatigueLevel;
+                document.getElementById('experience-amount').innerText = data.experienceAmount;
+            }
+        })
+        .catch(error => console.error('Ошибка при загрузке данных:', error));
+}
+
+
+
+
 
 function increaseCount() {
     if (fatigueLevel > 0) { // Увеличиваем счетчик только если есть усталость

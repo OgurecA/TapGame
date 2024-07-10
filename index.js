@@ -102,7 +102,6 @@ app.get('/:telegramId', (req, res) => {
 // Загрузка данных игры для конкретного пользователя
 app.get('/load/:telegramId', (req, res) => {
     const telegramId = req.params.telegramId;
-	const indexPath = path.join(__dirname, 'CLICK', 'clicker.html');
     db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
         if (err) {
             console.error('Ошибка при запросе к базе данных:', err);
@@ -111,8 +110,7 @@ app.get('/load/:telegramId', (req, res) => {
         if (row) {
             // Пользователь найден, перенаправляем на страницу с игрой
 			console.log(`Данные найдены, отправка HTML для Telegram ID: ${telegramId}`);
-			const htmlResponse = `<script>const initialData = ${JSON.stringify(row)};</script>` + fs.readFileSync(indexPath, 'utf8');
-			res.send(htmlResponse);
+            res.json(row);
         } else {
             // Пользователь не найден, регистрируем и перенаправляем
             db.run(`INSERT INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, 0, 100, 0, 0)`,
@@ -121,10 +119,7 @@ app.get('/load/:telegramId', (req, res) => {
                     console.error('Ошибка при регистрации нового пользователя:', err);
                     return res.status(500).send('Failed to register user');
                 }
-                const htmlResponse = `<script>const initialData = ${JSON.stringify({
-                    telegramId, clickCount: 0, fatigueLevel: 100, experienceLevel: 0, experienceAmount: 0
-                })};</script>` + fs.readFileSync(indexPath, 'utf8');
-                res.send(htmlResponse);
+                res.redirect(`/load/${telegramId}`);
             });
         }
     });
