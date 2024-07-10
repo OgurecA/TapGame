@@ -92,8 +92,16 @@ app.get('/:telegramId', (req, res) => {
                 ExperienceAmount: ${row.experienceAmount}`);
 			res.sendFile(path.join(__dirname, 'CLICK', 'clicker.html'));
         } else {
-            console.log(`Пользователь ${telegramId} не найден.`);
-            res.redirect(`/${telegramId}`);
+            console.log(`Пользователь не найден, регистрируем и перенаправляем`);
+            db.run(`INSERT INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, 0, 100, 0, 0)`,
+            [telegramId], function(err) {
+                if (err) {
+                    console.error('Ошибка при регистрации нового пользователя:', err);
+                    return res.status(500).send('Failed to register user');
+                } else {
+					res.redirect(`/${telegramId}`);
+				}
+            });
         }
 		
     });
@@ -112,17 +120,6 @@ app.get('/load/:telegramId', (req, res) => {
             // Пользователь найден, перенаправляем на страницу с игрой
 			console.log(`Данные найдены для Telegram ID: ${telegramId}`);
             res.json(row);
-        } else {
-            // Пользователь не найден, регистрируем и перенаправляем
-            db.run(`INSERT INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, 0, 100, 0, 0)`,
-            [telegramId], function(err) {
-                if (err) {
-                    console.error('Ошибка при регистрации нового пользователя:', err);
-                    return res.status(500).send('Failed to register user');
-                } else {
-					res.redirect(`/${telegramId}`);
-				}
-            });
         }
     });
 });
