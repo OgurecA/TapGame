@@ -57,7 +57,7 @@ function getUserData(telegramId, callback) {
     });
 }
 
-app.post('/save-user/:telegramId', (req, res) => {
+app.post('/:telegramId/save', (req, res) => {
     console.log('Получен POST запрос для:', req.params.telegramId); // Логирование при получении запроса
     const telegramId = req.params.telegramId;
     const { clickCount, fatigueLevel, experienceLevel, experienceAmount } = req.body;
@@ -100,7 +100,7 @@ app.get('/:telegramId', (req, res) => {
 
 
 // Загрузка данных игры для конкретного пользователя
-app.get('/load-user/:telegramId', (req, res) => {
+app.get('/:telegramId/load', (req, res) => {
     const telegramId = req.params.telegramId;
     db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
         if (err) {

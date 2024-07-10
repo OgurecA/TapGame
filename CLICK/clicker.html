@@ -255,16 +255,16 @@ const totalParts = 100;
 let experienceLevel = 0;
 const maxExperience = 10;
 let experienceAmount = 0;
-const telegramId = window.location.pathname.split('/')[1]; // Получение ID из URL
+const telegramId = window.location.pathname.split('/')[2]; // Получение ID из URL
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    const telegramId = window.location.pathname.split('/')[1]; // Предполагается, что ID находится в URL
+    const telegramId = window.location.pathname.split('/')[2]; // Предполагается, что ID находится в URL
     loadGameData(telegramId);
 });
 
 function loadGameData(telegramId) {
-    fetch(`/load/${telegramId}`)  // AJAX запрос к серверу с идентификатором пользователя
+    fetch(`/${telegramId}/load`)  // AJAX запрос к серверу с идентификатором пользователя
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -295,7 +295,7 @@ async function saveGameData() {
     });
 
     try {
-        const response = await fetch(`/save-user/${telegramId}`, {
+        const response = await fetch(`/${telegramId}/save`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: body
