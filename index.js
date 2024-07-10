@@ -16,6 +16,8 @@ app.use(cors({
 
 app.use(express.static('CLICK'));
 app.use(express.json());
+app.get('/favicon.ico', (req, res) => res.status(204)); // Отправляет статус 204 (No Content)
+
 
 const db = new sqlite3.Database('./clickerGame.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
     if (err) {
