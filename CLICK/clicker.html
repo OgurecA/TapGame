@@ -259,15 +259,18 @@ const telegramId = window.location.pathname.split('/')[1]; // Получение
 
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const telegramId = window.location.pathname.slice(1); // Получение ID пользователя из URL
     try {
-        const response = await fetch(`/${telegramId}`); // Убедитесь, что ваш серверный маршрут настроен правильно
+        // Предполагаем, что сервер ожидает запросы на маршруте /:telegramId
+        const response = await fetch(`/${telegramId}`);
         const data = await response.json();
+
         if (data && data.clickCount !== undefined) {
+            // Обновление данных на странице
             count = data.clickCount;
             fatigueLevel = data.fatigueLevel;
             experienceLevel = data.experienceLevel;
             experienceAmount = data.experienceAmount;
+
             document.getElementById('clickCount').innerText = count;
             updateExperienceBar();
             updateFatigueBar();
@@ -281,7 +284,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Ошибка загрузки данных:', error);
     }
 });
-
 
 
 function increaseCount() {

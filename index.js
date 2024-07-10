@@ -50,6 +50,7 @@ app.get('/:telegramId', (req, res) => {
         }
         if (row) {
             res.json(row); // Отправляем данные пользователя
+			res.sendFile(path.join(__dirname, 'CLICK', 'clicker.html')); // Отправляем HTML файл
         } else {
             // Если пользователь не найден, возможно, стоит вернуть сообщение об ошибке или статус 404
             res.status(404).json({ message: 'Пользователь не найден' });
