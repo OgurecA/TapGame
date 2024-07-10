@@ -90,6 +90,7 @@ app.get('/:telegramId', (req, res) => {
                 FatigueLevel: ${row.fatigueLevel},
                 ExperienceLevel: ${row.experienceLevel},
                 ExperienceAmount: ${row.experienceAmount}`);
+			res.sendFile(path.join(__dirname, 'CLICK', 'clicker.html'));
         } else {
             console.log(`Пользователь ${telegramId} не найден.`);
             res.redirect(`/${telegramId}`);
