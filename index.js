@@ -80,7 +80,7 @@ app.post('/save/:telegramId', (req, res) => {
 
 
 // Этот маршрут теперь будет отправлять HTML страницу, если найдет пользователя
-app.get('/:telegramId', (req, res) => {
+app.get('к/:telegramId', (req, res) => {
     const telegramId = req.params.telegramId;
     db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
         if (row) {
