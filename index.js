@@ -8,7 +8,6 @@ const cors = require('cors');
 const path = require('path');
 const port = process.env.PORT || 3000;
 const fs = require('fs'); // Добавьте эту строку в начало файла
-const indexPath = path.join(__dirname, 'CLICK', 'clicker.html');
 
 
 app.use(cors({
@@ -92,7 +91,7 @@ app.get('/:telegramId', (req, res) => {
             return res.status(404).send('Пользователь не найден');
         }
         // Отправляем файл HTML с встроенными данными
-        const indexPath = path.join(__dirname, 'clicker.html');
+        const indexPath = path.join(__dirname, 'CLICK', 'clicker.html');
         const htmlResponse = `<script>const initialData = ${JSON.stringify(row)};</script>` + fs.readFileSync(indexPath, 'utf8');
         res.send(htmlResponse);
     });
