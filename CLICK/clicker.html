@@ -260,7 +260,7 @@ const telegramId = window.location.pathname.split('/')[1]; // Получение
 
 document.addEventListener('DOMContentLoaded', async () => {
     const telegramId = window.location.pathname.split('/')[1]; // Получение ID пользователя из URL
-    const url = `/load/${telegramId}`;
+    const url = `/${telegramId}`;
     console.log("Запрос к URL:", url); // Добавьте эту строку для проверки URL
     try {
         const response = await fetch(url);
