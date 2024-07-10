@@ -92,17 +92,16 @@ app.get('/:telegramId', (req, res) => {
                 ExperienceAmount: ${row.experienceAmount}`);
         } else {
             console.log(`Пользователь ${telegramId} не найден.`);
-            res.status(404).json({ message: 'Пользователь не найден' });
-			res.redirect(`/load/${telegramId}`);
+            res.redirect(`/${telegramId}`);
         }
+		
     });
 });
 
 
 // Загрузка данных игры для конкретного пользователя
-app.get('/load/:telegramId', (req, res) => {
+app.get('/:telegramId', (req, res) => {
     const telegramId = req.params.telegramId;
-	const indexPath = path.join(__dirname, 'CLICK', 'clicker.html');
     db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
         if (err) {
             console.error('Ошибка при запросе к базе данных:', err);
@@ -110,9 +109,8 @@ app.get('/load/:telegramId', (req, res) => {
         }
         if (row) {
             // Пользователь найден, перенаправляем на страницу с игрой
-			console.log(`Данные найдены, отправка HTML для Telegram ID: ${telegramId}`);
-			const htmlResponse = `<script>const initialData = ${JSON.stringify(row)};</script>` + fs.readFileSync(indexPath, 'utf8');
-			res.send(htmlResponse);
+			console.log(`Данные найдены для Telegram ID: ${telegramId}`);
+            res.sendFile(path.join(__dirname, 'CLICK', 'clicker.html'));
         } else {
             // Пользователь не найден, регистрируем и перенаправляем
             db.run(`INSERT INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, 0, 100, 0, 0)`,
@@ -120,8 +118,9 @@ app.get('/load/:telegramId', (req, res) => {
                 if (err) {
                     console.error('Ошибка при регистрации нового пользователя:', err);
                     return res.status(500).send('Failed to register user');
-                }
-                res.redirect(`/load/${telegramId}`);
+                } else {
+					res.redirect(`/${telegramId}`);
+				}
             });
         }
     });
