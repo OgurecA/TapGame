@@ -259,31 +259,31 @@ const telegramId = window.location.pathname.split('/')[1]; // Получение
 
 
 document.addEventListener('DOMContentLoaded', async () => {
+    const telegramId = window.location.pathname.split('/')[1]; // Получение ID пользователя из URL
     try {
-        // Предполагаем, что сервер ожидает запросы на маршруте /:telegramId
         const response = await fetch(`/${telegramId}`);
         const data = await response.json();
 
-        if (data && data.clickCount !== undefined) {
-            // Обновление данных на странице
-            count = data.clickCount;
-            fatigueLevel = data.fatigueLevel;
-            experienceLevel = data.experienceLevel;
-            experienceAmount = data.experienceAmount;
-
-            document.getElementById('clickCount').innerText = count;
-            updateExperienceBar();
-            updateFatigueBar();
-            updateExperienceAmount();
-            document.getElementById('XP-points').innerText = experienceLevel;
-            document.getElementById('energy-points').innerText = fatigueLevel;
-            document.getElementById('experience-amount').innerText = experienceAmount;
+        if (data) {
+            // Используем полученные данные для инициализации состояния игры
+            initializeGameState(data);
+        } else {
+            console.log('Данные пользователя не найдены.');
         }
-        console.log('Прогресс загружен:', data);
     } catch (error) {
-        console.error('Ошибка загрузки данных:', error);
+        console.error('Ошибка при загрузке данных пользователя:', error);
     }
 });
+
+function initializeGameState(data) {
+    // Здесь ваш код для инициализации состояния игры
+    document.getElementById('clickCount').innerText = data.clickCount;
+    document.getElementById('XP-points').innerText = data.experienceLevel;
+    document.getElementById('energy-points').innerText = data.fatigueLevel;
+    document.getElementById('experience-amount').innerText = data.experienceAmount;
+    updateExperienceBar(data.experienceLevel);
+    updateFatigueBar(data.fatigueLevel);
+}
 
 
 function increaseCount() {
@@ -343,6 +343,7 @@ document.getElementById('boxer').addEventListener('click', function() {
     setTimeout(() => {
         this.classList.remove('enlarge');
     }, 100);
+	saveGameData();
 });
 
 window.addEventListener('dblclick', function(event) {
@@ -354,29 +355,25 @@ document.addEventListener('selectstart', function(event) {
 }, false);
 
 // Отправка данных на сервер каждые 5 секунд
-setInterval(async () => {
-    const telegramId = window.location.pathname.split('/')[1]; // Получение ID пользователя из URL
-    const data = {
+async function saveGameData() {
+    const body = JSON.stringify({
         clickCount: count,
         fatigueLevel: fatigueLevel,
         experienceLevel: experienceLevel,
         experienceAmount: experienceAmount
-    };
+    });
 
     try {
         const response = await fetch(`/${telegramId}`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
+            headers: { 'Content-Type': 'application/json' },
+            body: body
         });
-        const result = await response.json();
-        console.log('Прогресс сохранён:', result);
+        console.log('Данные успешно сохранены:', await response.json());
     } catch (error) {
-        console.error('Ошибка при отправке данных:', error);
+        console.error('Ошибка при сохранении данных:', error);
     }
-}, 5000);
+}
 
 </script>
 </body>
