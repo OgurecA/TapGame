@@ -40,6 +40,20 @@ const db = new sqlite3.Database('./clickerGame.db', sqlite3.OPEN_READWRITE | sql
     }
 });
 
+function getUserData(telegramId, callback) {
+    db.get("SELECT * FROM users WHERE telegramId = ?", [telegramId], (err, row) => {
+        if (err) {
+            console.error('Ошибка при запросе к базе данных:', err);
+            callback(err, null); // Возвращаем ошибку и null в качестве данных
+        } else if (row) {
+            console.log('Данные пользователя получены:', row);
+            callback(null, row); // Возвращаем null в качестве ошибки и данные пользователя
+        } else {
+            console.log('Пользователь не найден:', telegramId);
+            callback(null, null); // Пользователь не найден, возвращаем null в качестве ошибки и данных
+        }
+    });
+}
 
 app.post('/:telegramId', (req, res) => {
     const telegramId = req.params.telegramId
@@ -94,7 +108,6 @@ app.get('/:telegramId', (req, res) => {
         }
         if (row) {
             res.json(row); // Отправляем данные пользователя
-			res.sendFile(path.join(__dirname, 'CLICK', 'clicker.html')); // Отправляем HTML
         } else {
             // Если пользователь не найден, возможно, стоит вернуть сообщение об ошибке или статус 404
             res.status(404).json({ message: 'Пользователь не найден' });

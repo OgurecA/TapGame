@@ -249,22 +249,28 @@ body {
 
 
 <script>
-let count = 0; // Счетчик кликов
-let fatigueLevel = 100; // Начальный уровень усталости
-const totalParts = 100; // Количество частей на шкале
-let experienceLevel = 0; // Начальный уровень опыта
-const maxExperience = 10; // Максимальное количество делений на шкале
+let count = 0;
+let fatigueLevel = 100;
+const totalParts = 100;
+let experienceLevel = 0;
+const maxExperience = 10;
 let experienceAmount = 0;
+const telegramId = window.location.pathname.split('/')[1]; // Получение ID из URL
+
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const response = await fetch('/load-game');
+        // Предполагаем, что сервер ожидает запросы на маршруте /:telegramId
+        const response = await fetch(`/${telegramId}`);
         const data = await response.json();
+
         if (data && data.clickCount !== undefined) {
+            // Обновление данных на странице
             count = data.clickCount;
             fatigueLevel = data.fatigueLevel;
             experienceLevel = data.experienceLevel;
             experienceAmount = data.experienceAmount;
+
             document.getElementById('clickCount').innerText = count;
             updateExperienceBar();
             updateFatigueBar();
@@ -329,13 +335,10 @@ setInterval(() => {
 }, 3000);  // Каждые 3000 мс (3 секунды)
 
 document.getElementById('boxer').addEventListener('click', function() {
-    if (fatigueLevel > 0) { // Условие, если у вас есть шкала усталости
+    if (fatigueLevel > 0) {
         increaseCount();
-        increaseExperience(); // Вызов увеличения опыта
+        increaseExperience();
     }
-});
-
-document.getElementById('boxer').addEventListener('click', function() {
     this.classList.add('enlarge');
     setTimeout(() => {
         this.classList.remove('enlarge');
@@ -358,7 +361,7 @@ setInterval(async () => {
             experienceLevel: experienceLevel,
             experienceAmount: experienceAmount
         });
-        const response = await fetch('/save-game', {
+        const response = await fetch(`/${telegramId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -371,7 +374,6 @@ setInterval(async () => {
         console.error('Ошибка сохранения данных:', error);
     }
 }, 5000); // Сохраняем каждые 5 секунд
-
 
 </script>
 </body>
