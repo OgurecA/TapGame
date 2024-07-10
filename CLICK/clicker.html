@@ -260,8 +260,10 @@ const telegramId = window.location.pathname.split('/')[1]; // Получение
 
 document.addEventListener('DOMContentLoaded', async () => {
     const telegramId = window.location.pathname.split('/')[1]; // Получение ID пользователя из URL
+    const url = `/${telegramId}`;
+    console.log("Запрос к URL:", url); // Добавьте эту строку для проверки URL
     try {
-        const response = await fetch(`/${telegramId}`);
+        const response = await fetch(url);
         const data = await response.json();
 
         if (data) {
@@ -274,6 +276,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Ошибка при загрузке данных пользователя:', error);
     }
 });
+
 
 function initializeGameState(data) {
     // Здесь ваш код для инициализации состояния игры

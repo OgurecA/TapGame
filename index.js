@@ -112,14 +112,13 @@ app.get('/:telegramId', (req, res) => {
             console.error('Ошибка при запросе к базе данных:', err);
             return res.status(500).json({ error: 'Database error' });
         }
-        if (row) {
-            res.json(row); // Отправляем данные пользователя
-        } else {
-            // Если пользователь не найден, возможно, стоит вернуть сообщение об ошибке или статус 404
-            res.status(404).json({ message: 'Пользователь не найден' });
+        if (!row) {
+            return res.status(404).json({ message: 'Пользователь не найден' });
         }
+        res.json(row); // Отправляем данные пользователя
     });
 });
+
 
 
 app.listen(port, '0.0.0.0', () => {
