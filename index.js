@@ -49,6 +49,7 @@ app.get('/:telegramId', (req, res) => {
         }
         if (row) {
             res.sendFile(path.join(__dirname, 'CLICK', 'clicker.html')); // Отправляем HTML файл
+			console.log('Пользователь подключен:', telegramId);
         } else {
             // Пользователь не найден, создаем новую запись с начальными данными
             db.run(`INSERT INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, 0, 100, 0, 0)`,
