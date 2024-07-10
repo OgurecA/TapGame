@@ -277,18 +277,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-
-function initializeGameState(data) {
-    // Здесь ваш код для инициализации состояния игры
-    document.getElementById('clickCount').innerText = data.clickCount;
-    document.getElementById('XP-points').innerText = data.experienceLevel;
-    document.getElementById('energy-points').innerText = data.fatigueLevel;
-    document.getElementById('experience-amount').innerText = data.experienceAmount;
-    updateExperienceBar(data.experienceLevel);
-    updateFatigueBar(data.fatigueLevel);
-}
-
-
 function increaseCount() {
     if (fatigueLevel > 0) { // Увеличиваем счетчик только если есть усталость
         count++;
