@@ -222,7 +222,7 @@ body {
 </div>
 <div id="slogan">
     <a href="https://example.com" target="_blank" rel="noopener noreferrer" class="slogan-link">
-        <p><i>Scamster</i></p>
+        <p><i>Nahren Bednost</i></p>
     </a>
 </div>
 <div id="fatigue-bar-container">
@@ -295,7 +295,7 @@ async function saveGameData() {
     });
 
     try {
-        const response = await fetch(`/${telegramId}`, {
+        const response = await fetch(`/save-user/${telegramId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: body
