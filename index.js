@@ -114,6 +114,7 @@ app.get('/load/:telegramId', (req, res) => {
         if (row) {
             // Пользователь найден, перенаправляем на страницу с игрой
             res.redirect(`/${telegramId}`);
+			console.log(`Строка работает`);
         } else {
             // Пользователь не найден, регистрируем и перенаправляем
             db.run(`INSERT INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, 0, 100, 0, 0)`,
