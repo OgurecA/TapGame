@@ -90,7 +90,6 @@ app.get('/:telegramId', (req, res) => {
                 FatigueLevel: ${row.fatigueLevel},
                 ExperienceLevel: ${row.experienceLevel},
                 ExperienceAmount: ${row.experienceAmount}`);
-            res.json(row); // Отправляем данные пользователя
         } else {
             console.log(`Пользователь ${telegramId} не найден.`);
             res.status(404).json({ message: 'Пользователь не найден' });
