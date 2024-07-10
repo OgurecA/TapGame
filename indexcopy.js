@@ -40,21 +40,41 @@ const db = new sqlite3.Database('./clickerGame.db', sqlite3.OPEN_READWRITE | sql
     }
 });
 
+function getUserData(telegramId, callback) {
+    db.get("SELECT * FROM users WHERE telegramId = ?", [telegramId], (err, row) => {
+        if (err) {
+            console.error('Ошибка при запросе к базе данных:', err);
+            callback(err, null); // Возвращаем ошибку и null в качестве данных
+        } else if (row) {
+            console.log('Данные пользователя получены:', row);
+            callback(null, row); // Возвращаем null в качестве ошибки и данные пользователя
+        } else {
+            console.log('Пользователь не найден:', telegramId);
+            callback(null, null); // Пользователь не найден, возвращаем null в качестве ошибки и данных
+        }
+    });
+}
 
 app.post('/:telegramId', (req, res) => {
-    const telegramId = req.params.telegramId
+    console.log('Получен POST запрос для:', req.params.telegramId); // Логирование при получении запроса
+    const telegramId = req.params.telegramId;
     const { clickCount, fatigueLevel, experienceLevel, experienceAmount } = req.body;
+    console.log('Данные для обновления:', req.body); // Логирование полученных данных
 
-    // Обновление данных пользователя в базе данных
-    db.run(`UPDATE users SET clickCount = ?, fatigueLevel = ?, experienceLevel = ?, experienceAmount = ? WHERE telegramId = ?`,
-        [clickCount, fatigueLevel, experienceLevel, experienceAmount, telegramId], function(err) {
+    db.run(
+        `UPDATE users SET clickCount = ?, fatigueLevel = ?, experienceLevel = ?, experienceAmount = ? WHERE telegramId = ?`,
+        [clickCount, fatigueLevel, experienceLevel, experienceAmount, telegramId],
+        function(err) {
             if (err) {
-                console.error('Ошибка при сохранении данных:', err);
-                return res.status(500).json({ error: 'Database error', details: err.message });
+                console.error('Ошибка при обновлении данных пользователя:', err);
+                return res.status(500).json({ error: 'Database error' });
             }
+            console.log('Прогресс для пользователя', telegramId, 'был успешно обновлен'); // Логирование успешного обновления
             res.json({ message: 'Прогресс сохранен', telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount });
-        });
+        }
+    );
 });
+
 
 
 // Этот маршрут теперь будет отправлять HTML страницу, если найдет пользователя
@@ -92,14 +112,13 @@ app.get('/:telegramId', (req, res) => {
             console.error('Ошибка при запросе к базе данных:', err);
             return res.status(500).json({ error: 'Database error' });
         }
-        if (row) {
-            res.json(row); // Отправляем данные пользователя
-        } else {
-            // Если пользователь не найден, возможно, стоит вернуть сообщение об ошибке или статус 404
-            res.status(404).json({ message: 'Пользователь не найден' });
+        if (!row) {
+            return res.status(404).json({ message: 'Пользователь не найден' });
         }
+        res.json(row); // Отправляем данные пользователя
     });
 });
+
 
 
 app.listen(port, '0.0.0.0', () => {
