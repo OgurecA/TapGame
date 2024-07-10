@@ -94,11 +94,6 @@ app.get('/:telegramId', (req, res) => {
             console.log(`Пользователь ${telegramId} не найден.`);
             res.status(404).json({ message: 'Пользователь не найден' });
         }
-        // Отправляем файл HTML с встроенными данными
-        const indexPath = path.join(__dirname, 'CLICK', 'clicker.html');
-        const htmlResponse = `<script>const initialData = ${JSON.stringify(row)};</script>` + fs.readFileSync(indexPath, 'utf8');
-        res.send(htmlResponse);
-		
     });
 });
 
@@ -106,6 +101,7 @@ app.get('/:telegramId', (req, res) => {
 // Загрузка данных игры для конкретного пользователя
 app.get('/load/:telegramId', (req, res) => {
     const telegramId = req.params.telegramId;
+	const indexPath = path.join(__dirname, 'CLICK', 'clicker.html');
     db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
         if (err) {
             console.error('Ошибка при запросе к базе данных:', err);
