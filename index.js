@@ -57,7 +57,7 @@ function getUserData(telegramId, callback) {
     });
 }
 
-app.post('/:telegramId/save', (req, res) => {
+app.post('/:telegramId', (req, res) => {
     console.log('Получен POST запрос для:', req.params.telegramId); // Логирование при получении запроса
     const telegramId = req.params.telegramId;
     const { clickCount, fatigueLevel, experienceLevel, experienceAmount } = req.body;
@@ -92,16 +92,17 @@ app.get('/:telegramId', (req, res) => {
                 ExperienceAmount: ${row.experienceAmount}`);
         } else {
             console.log(`Пользователь ${telegramId} не найден.`);
-            res.redirect(`/load-user/${telegramId}`);
+            res.status(404).json({ message: 'Пользователь не найден' });
+			res.redirect(`/load/${telegramId}`);
         }
-		
     });
 });
 
 
 // Загрузка данных игры для конкретного пользователя
-app.get('/:telegramId/load', (req, res) => {
+app.get('/load/:telegramId', (req, res) => {
     const telegramId = req.params.telegramId;
+	const indexPath = path.join(__dirname, 'CLICK', 'clicker.html');
     db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
         if (err) {
             console.error('Ошибка при запросе к базе данных:', err);
@@ -109,8 +110,9 @@ app.get('/:telegramId/load', (req, res) => {
         }
         if (row) {
             // Пользователь найден, перенаправляем на страницу с игрой
-			console.log(`Данные найдены для Telegram ID: ${telegramId}`);
-            res.sendFile(path.join(__dirname, 'CLICK', 'clicker.html'));
+			console.log(`Данные найдены, отправка HTML для Telegram ID: ${telegramId}`);
+			const htmlResponse = `<script>const initialData = ${JSON.stringify(row)};</script>` + fs.readFileSync(indexPath, 'utf8');
+			res.send(htmlResponse);
         } else {
             // Пользователь не найден, регистрируем и перенаправляем
             db.run(`INSERT INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, 0, 100, 0, 0)`,
@@ -118,9 +120,8 @@ app.get('/:telegramId/load', (req, res) => {
                 if (err) {
                     console.error('Ошибка при регистрации нового пользователя:', err);
                     return res.status(500).send('Failed to register user');
-                } else {
-					res.redirect(`/load-user/${telegramId}`);
-				}
+                }
+                res.redirect(`/load/${telegramId}`);
             });
         }
     });

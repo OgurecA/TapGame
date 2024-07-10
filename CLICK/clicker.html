@@ -7,12 +7,12 @@
 <style>
 @font-face {
     font-family: 'GraffitiFont';
-    src: url('/brushed.ttf') format('truetype');
+    src: url('Fonts/brushed.ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'StatsFont';
-    src: url('/DIEDIEDI.ttf') format('truetype');
+    src: url('Fonts/DIEDIEDI.ttf') format('truetype');
 }
 
 * {
@@ -190,39 +190,39 @@ body {
 #youtube {
 	bottom: 0.5vh;
 	left: 1vw;
-	background-image: url('/youtube.png');
+	background-image: url('youtube.png');
 }
 #telegram {
 	bottom: 0.5vh;
 	left: 20.8vw;
-	background-image: url('/telegram.png');
+	background-image: url('telegram.png');
 }
 #X {
 	bottom: 0.5vh;
 	left: 40.6vw;
-	background-image: url('/X.png');
+	background-image: url('X.png');
 }
 #web {
 	bottom: 0.5vh;
 	left: 60.4vw;
-	background-image: url('/web.png');
+	background-image: url('web.png');
 }
 #discord {
 	bottom: 0.5vh;
 	left: 80.2vw;
-	background-image: url('/dc.png');
+	background-image: url('dc.png');
 }
 
 </style>
 </head>
 <body>
 <div class="clicker-game">
-    <img src="/slim.jpg" id="boxer" alt="Boxer">
+    <img src="slim.jpg" id="boxer" alt="Boxer">
 	<span id="clickCount">0</span>
 </div>
 <div id="slogan">
     <a href="https://example.com" target="_blank" rel="noopener noreferrer" class="slogan-link">
-        <p><i>Nahren Bednost</i></p>
+        <p><i>Nahren bednost</i></p>
     </a>
 </div>
 <div id="fatigue-bar-container">
@@ -255,56 +255,27 @@ const totalParts = 100;
 let experienceLevel = 0;
 const maxExperience = 10;
 let experienceAmount = 0;
-const telegramId = window.location.pathname.split('/')[2]; // Получение ID из URL
+const telegramId = window.location.pathname.split('/')[1]; // Получение ID из URL
 
 
-document.addEventListener('DOMContentLoaded', function() {
-    const telegramId = window.location.pathname.split('/')[2]; // Предполагается, что ID находится в URL
-    loadGameData(telegramId);
-});
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof initialData !== 'undefined') {
+        const { clickCount, fatigueLevel, experienceLevel, experienceAmount } = initialData;
+        // Инициализация игры с полученными данными
+        count = clickCount;
+        fatigueLevel = fatigueLevel;
+        experienceLevel = experienceLevel;
+        experienceAmount = experienceAmount;
 
-function loadGameData(telegramId) {
-    fetch(`/${telegramId}/load`)  // AJAX запрос к серверу с идентификатором пользователя
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data) {
-                // Обновление пользовательского интерфейса с новыми данными
-                document.getElementById('clickCount').innerText = data.clickCount;
-                document.getElementById('fatigue-bar').style.width = `${data.fatigueLevel}%`;
-                document.getElementById('experience-bar').style.width = `${(data.experienceLevel / maxExperience) * 100}%`;
-                document.getElementById('XP-points').innerText = data.experienceLevel;
-                document.getElementById('energy-points').innerText = data.fatigueLevel;
-                document.getElementById('experience-amount').innerText = data.experienceAmount;
-            }
-        })
-        .catch(error => console.error('Ошибка при загрузке данных:', error));
-}
-
-// Отправка данных на сервер каждые 5 секунд
-async function saveGameData() {
-    const body = JSON.stringify({
-        clickCount: count,
-        fatigueLevel: fatigueLevel,
-        experienceLevel: experienceLevel,
-        experienceAmount: experienceAmount
-    });
-
-    try {
-        const response = await fetch(`/${telegramId}/save`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: body
-        });
-        console.log('Данные успешно сохранены:', await response.json());
-    } catch (error) {
-        console.error('Ошибка при сохранении данных:', error);
+        document.getElementById('clickCount').innerText = count;
+        updateExperienceBar();
+        updateFatigueBar();
+        updateExperienceAmount();
+        document.getElementById('XP-points').innerText = experienceLevel;
+        document.getElementById('energy-points').innerText = fatigueLevel;
+        document.getElementById('experience-amount').innerText = experienceAmount;
     }
-}
+});
 
 
 
@@ -376,7 +347,26 @@ document.addEventListener('selectstart', function(event) {
     event.preventDefault();
 }, false);
 
+// Отправка данных на сервер каждые 5 секунд
+async function saveGameData() {
+    const body = JSON.stringify({
+        clickCount: count,
+        fatigueLevel: fatigueLevel,
+        experienceLevel: experienceLevel,
+        experienceAmount: experienceAmount
+    });
 
+    try {
+        const response = await fetch(`/${telegramId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: body
+        });
+        console.log('Данные успешно сохранены:', await response.json());
+    } catch (error) {
+        console.error('Ошибка при сохранении данных:', error);
+    }
+}
 
 </script>
 </body>
