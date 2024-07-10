@@ -98,9 +98,6 @@ app.get('/:telegramId', (req, res) => {
     });
 });
 
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/CLICK/clicker.html');
-});
 
 // Загрузка данных игры для конкретного пользователя
 app.get('/load/:telegramId', (req, res) => {
