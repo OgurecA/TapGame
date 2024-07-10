@@ -57,7 +57,7 @@ function getUserData(telegramId, callback) {
     });
 }
 
-app.post('/save/:telegramId', (req, res) => {
+app.post('/save-user/:telegramId', (req, res) => {
     console.log('Получен POST запрос для:', req.params.telegramId); // Логирование при получении запроса
     const telegramId = req.params.telegramId;
     const { clickCount, fatigueLevel, experienceLevel, experienceAmount } = req.body;
@@ -92,7 +92,7 @@ app.get('/:telegramId', (req, res) => {
                 ExperienceAmount: ${row.experienceAmount}`);
         } else {
             console.log(`Пользователь ${telegramId} не найден.`);
-            res.redirect(`/load/${telegramId}`);
+            res.redirect(`/load-user/${telegramId}`);
         }
 		
     });
@@ -100,7 +100,7 @@ app.get('/:telegramId', (req, res) => {
 
 
 // Загрузка данных игры для конкретного пользователя
-app.get('/load/:telegramId', (req, res) => {
+app.get('/load-user/:telegramId', (req, res) => {
     const telegramId = req.params.telegramId;
     db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
         if (err) {
@@ -119,7 +119,7 @@ app.get('/load/:telegramId', (req, res) => {
                     console.error('Ошибка при регистрации нового пользователя:', err);
                     return res.status(500).send('Failed to register user');
                 } else {
-					res.redirect(`/load/${telegramId}`);
+					res.redirect(`/load-user/${telegramId}`);
 				}
             });
         }
