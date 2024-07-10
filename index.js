@@ -98,6 +98,9 @@ app.get('/:telegramId', (req, res) => {
     });
 });
 
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/CLICK/clicker.html');
+});
 
 // Загрузка данных игры для конкретного пользователя
 app.get('/load/:telegramId', (req, res) => {
@@ -109,7 +112,7 @@ app.get('/load/:telegramId', (req, res) => {
         }
         if (row) {
             // Пользователь найден, перенаправляем на страницу с игрой
-			console.log(`Данные найдены, отправка HTML для Telegram ID: ${telegramId}`);
+			console.log(`Данные найдены для Telegram ID: ${telegramId}`);
             res.json(row);
         } else {
             // Пользователь не найден, регистрируем и перенаправляем
