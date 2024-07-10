@@ -56,18 +56,20 @@ function getUserData(telegramId, callback) {
 }
 
 app.post('/:telegramId', (req, res) => {
-    const telegramId = req.params.telegramId
+    const telegramId = req.params.telegramId;
     const { clickCount, fatigueLevel, experienceLevel, experienceAmount } = req.body;
 
-    // Обновление данных пользователя в базе данных
-    db.run(`UPDATE users SET clickCount = ?, fatigueLevel = ?, experienceLevel = ?, experienceAmount = ? WHERE telegramId = ?`,
-        [clickCount, fatigueLevel, experienceLevel, experienceAmount, telegramId], function(err) {
+    db.run(
+        `UPDATE users SET clickCount = ?, fatigueLevel = ?, experienceLevel = ?, experienceAmount = ? WHERE telegramId = ?`,
+        [clickCount, fatigueLevel, experienceLevel, experienceAmount, telegramId],
+        function(err) {
             if (err) {
-                console.error('Ошибка при сохранении данных:', err);
-                return res.status(500).json({ error: 'Database error', details: err.message });
+                console.error('Ошибка при обновлении данных пользователя:', err);
+                return res.status(500).json({ error: 'Database error' });
             }
             res.json({ message: 'Прогресс сохранен', telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount });
-        });
+        }
+    );
 });
 
 

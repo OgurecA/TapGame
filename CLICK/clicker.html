@@ -353,27 +353,30 @@ document.addEventListener('selectstart', function(event) {
     event.preventDefault();
 }, false);
 
+// Отправка данных на сервер каждые 5 секунд
 setInterval(async () => {
+    const telegramId = window.location.pathname.split('/')[1]; // Получение ID пользователя из URL
+    const data = {
+        clickCount: count,
+        fatigueLevel: fatigueLevel,
+        experienceLevel: experienceLevel,
+        experienceAmount: experienceAmount
+    };
+
     try {
-        const body = JSON.stringify({
-            clickCount: count,
-            fatigueLevel: fatigueLevel,
-            experienceLevel: experienceLevel,
-            experienceAmount: experienceAmount
-        });
         const response = await fetch(`/${telegramId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: body
+            body: JSON.stringify(data)
         });
         const result = await response.json();
         console.log('Прогресс сохранён:', result);
     } catch (error) {
-        console.error('Ошибка сохранения данных:', error);
+        console.error('Ошибка при отправке данных:', error);
     }
-}, 5000); // Сохраняем каждые 5 секунд
+}, 5000);
 
 </script>
 </body>
