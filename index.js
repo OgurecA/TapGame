@@ -40,6 +40,38 @@ const db = new sqlite3.Database('./clickerGame.db', sqlite3.OPEN_READWRITE | sql
     }
 });
 
+// Загрузка данных игры для конкретного пользователя
+app.get('/:telegramId', (req, res) => {
+    const telegramId = req.params.telegramId;
+    db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
+        if (err) {
+            console.error('Ошибка при запросе к базе данных:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        if (row) {
+            res.json(row); // Отправляем данные пользователя
+        } else {
+            // Если пользователь не найден, возможно, стоит вернуть сообщение об ошибке или статус 404
+            res.status(404).json({ message: 'Пользователь не найден' });
+        }
+    });
+});
+
+app.post('/:telegramId', (req, res) => {
+    const telegramId = req.params.telegramId
+    const { clickCount, fatigueLevel, experienceLevel, experienceAmount } = req.body;
+
+    // Обновление данных пользователя в базе данных
+    db.run(`UPDATE users SET clickCount = ?, fatigueLevel = ?, experienceLevel = ?, experienceAmount = ? WHERE telegramId = ?`,
+        [clickCount, fatigueLevel, experienceLevel, experienceAmount, telegramId], function(err) {
+            if (err) {
+                console.error('Ошибка при сохранении данных:', err);
+                return res.status(500).json({ error: 'Database error', details: err.message });
+            }
+            res.json({ message: 'Прогресс сохранен', telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount });
+        });
+});
+
 
 // Этот маршрут теперь будет отправлять HTML страницу, если найдет пользователя
 app.get('/:telegramId', (req, res) => {
@@ -67,38 +99,7 @@ app.get('/:telegramId', (req, res) => {
     });
 });
 
-app.post('/:telegramId', (req, res) => {
-    const telegramId = req.params.telegramId
-    const { clickCount, fatigueLevel, experienceLevel, experienceAmount } = req.body;
 
-    // Обновление данных пользователя в базе данных
-    db.run(`UPDATE users SET clickCount = ?, fatigueLevel = ?, experienceLevel = ?, experienceAmount = ? WHERE telegramId = ?`,
-        [clickCount, fatigueLevel, experienceLevel, experienceAmount, telegramId], function(err) {
-            if (err) {
-                console.error('Ошибка при сохранении данных:', err);
-                return res.status(500).json({ error: 'Database error', details: err.message });
-            }
-            res.json({ message: 'Прогресс сохранен', telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount });
-        });
-});
-
-
-// Загрузка данных игры для конкретного пользователя
-app.get('/:telegramId', (req, res) => {
-    const telegramId = req.params.telegramId;
-    db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
-        if (err) {
-            console.error('Ошибка при запросе к базе данных:', err);
-            return res.status(500).json({ error: 'Database error' });
-        }
-        if (row) {
-            res.json(row); // Отправляем данные пользователя
-        } else {
-            // Если пользователь не найден, возможно, стоит вернуть сообщение об ошибке или статус 404
-            res.status(404).json({ message: 'Пользователь не найден' });
-        }
-    });
-});
 
 
 app.listen(port, '0.0.0.0', () => {
