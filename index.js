@@ -57,7 +57,7 @@ function getUserData(telegramId, callback) {
     });
 }
 
-app.post('/:telegramId', (req, res) => {
+app.post('/save/:telegramId', (req, res) => {
     console.log('Получен POST запрос для:', req.params.telegramId); // Логирование при получении запроса
     const telegramId = req.params.telegramId;
     const { clickCount, fatigueLevel, experienceLevel, experienceAmount } = req.body;
