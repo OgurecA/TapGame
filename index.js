@@ -115,6 +115,7 @@ app.get('/load/:telegramId', (req, res) => {
             // Пользователь найден, перенаправляем на страницу с игрой
             res.redirect(`/${telegramId}`);
 			console.log(`Строка работает`);
+			const htmlResponse = `<script>const initialData = ${JSON.stringify(row)};</script>` + fs.readFileSync(indexPath, 'utf8');
         } else {
             // Пользователь не найден, регистрируем и перенаправляем
             db.run(`INSERT INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, 0, 100, 0, 0)`,
@@ -123,7 +124,7 @@ app.get('/load/:telegramId', (req, res) => {
                     console.error('Ошибка при регистрации нового пользователя:', err);
                     return res.status(500).send('Failed to register user');
                 }
-                res.redirect(`/${telegramId}`);
+                res.redirect(`/load/${telegramId}`);
             });
         }
     });
