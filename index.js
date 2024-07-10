@@ -7,6 +7,8 @@ const app = express();
 const cors = require('cors');
 const path = require('path');
 const port = process.env.PORT || 3000;
+const fs = require('fs'); // Добавьте эту строку в начало файла
+
 
 app.use(cors({
     origin: '*', // Разрешает запросы с любого домена
