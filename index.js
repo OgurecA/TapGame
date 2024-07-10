@@ -101,7 +101,7 @@ app.get('/:telegramId', (req, res) => {
 
 
 // Загрузка данных игры для конкретного пользователя
-app.get('/:telegramId', (req, res) => {
+app.get('/load/:telegramId', (req, res) => {
     const telegramId = req.params.telegramId;
     db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
         if (err) {
