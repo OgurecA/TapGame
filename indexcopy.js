@@ -101,7 +101,7 @@ app.get('/:telegramId', (req, res) => {
 
 
 // Загрузка данных игры для конкретного пользователя
-app.get('/:telegramId', (req, res) => {
+app.get('/load/:telegramId', (req, res) => {
     const telegramId = req.params.telegramId;
     db.get(`SELECT * FROM users WHERE telegramId = ?`, [telegramId], (err, row) => {
         if (err) {
@@ -111,7 +111,7 @@ app.get('/:telegramId', (req, res) => {
         if (row) {
             // Пользователь найден, перенаправляем на страницу с игрой
 			console.log(`Данные найдены для Telegram ID: ${telegramId}`);
-            res.sendFile(path.join(__dirname, 'CLICK', 'clicker.html'));
+            res.json(row);
         } else {
             // Пользователь не найден, регистрируем и перенаправляем
             db.run(`INSERT INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, 0, 100, 0, 0)`,
