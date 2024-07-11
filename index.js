@@ -128,10 +128,10 @@ app.get('/load/:telegramId', (req, res) => {
             return res.status(500).send('Database error');
         }
         if (row) {
-            const updatedFatigue = calculateFatigueRecovery(row.fatigueLevel, row.lastUpdated);
+            const updatedFatigue = calculateFatigueRecovery(row.fatigueLevel, row.lastTime);
             const now = new Date().toISOString();
             db.run(
-                `UPDATE users SET fatigueLevel = ?, lastUpdated = ? WHERE telegramId = ?`,
+                `UPDATE users SET fatigueLevel = ?, lastTime = ? WHERE telegramId = ?`,
                 [updatedFatigue, now, telegramId],
                 (updateErr) => {
                     if (updateErr) {
@@ -139,7 +139,7 @@ app.get('/load/:telegramId', (req, res) => {
                         return res.status(500).send('Database update error');
                     }
                     row.fatigueLevel = updatedFatigue;
-                    row.lastUpdated = now;
+                    row.lastTime = now;
                     console.log(`Данные обновлены для Telegram ID: ${telegramId}`);
                     res.json(row);
                 }
