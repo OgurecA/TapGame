@@ -42,9 +42,8 @@ const db = new sqlite3.Database('./clickerGame.db', sqlite3.OPEN_READWRITE | sql
     }
 });
 
-db.run(`
-  ALTER TABLE users ADD COLUMN lastUpdated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-`);
+db.run(`ALTER TABLE users ADD COLUMN lastUpdated TIMESTAMP`);
+
 
 function getUserData(telegramId, callback) {
     db.get("SELECT * FROM users WHERE telegramId = ?", [telegramId], (err, row) => {
