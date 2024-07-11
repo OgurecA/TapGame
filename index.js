@@ -80,10 +80,6 @@ app.post('/:telegramId', (req, res) => {
     );
 });
 
-app.get('/', (req, res) => {
-    const userId = req.query.userid; // Получение userID из параметра запроса
-    console.log(`User ID: ${userId}`); // Вывод ID пользователя в консоль сервера
-});
 
 // Этот маршрут теперь будет отправлять HTML страницу, если найдет пользователя
 app.get('/:telegramId', (req, res) => {
