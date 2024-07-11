@@ -263,6 +263,10 @@ document.addEventListener('DOMContentLoaded', function() {
     loadGameData(telegramId);
 });
 
+if (window.Telegram.WebApp) {
+        Telegram.WebApp.ready();
+        Telegram.WebApp.expand();
+
 function loadGameData(telegramId) {
     fetch(`/load/${telegramId}`)  // AJAX запрос к серверу с идентификатором пользователя
         .then(response => {
