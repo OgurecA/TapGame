@@ -285,13 +285,17 @@ function loadGameData(telegramId) {
 				experienceLevel = data.experienceLevel;
 				experienceAmount = data.experienceAmount;
 				fatigueLevel = data.fatigueLevel;
+				
+				updateFatigueBar();
+                updateExperienceBar();
+                updateExperienceAmount();
             }
         })
         .catch(error => console.error('Ошибка при загрузке данных:', error));
 }
 
-// Отправка данных на сервер каждые 5 секунд
-async function saveGameData() {
+// Отправка данных на сервер каждые 2 секунды
+setInterval(async () => {
     const body = JSON.stringify({
         clickCount: count,
         fatigueLevel: fatigueLevel,
@@ -305,11 +309,12 @@ async function saveGameData() {
             headers: { 'Content-Type': 'application/json' },
             body: body
         });
-        console.log('Данные успешно сохранены:', await response.json());
+        const result = await response.json(); // Получаем ответ от сервера
+        console.log('Данные успешно сохранены:', result);
     } catch (error) {
         console.error('Ошибка при сохранении данных:', error);
     }
-}
+}, 2000); // Интервал сохранения - 2000 мс (2 секунды)
 
 
 
