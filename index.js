@@ -110,10 +110,10 @@ app.get('/:telegramId', (req, res) => {
     });
 });
 
-function calculateFatigueRecovery(fatigueLevel, lastTime) {
+function calculateFatigueRecovery(fatigueLevel, lastUpdated) {
     const recoveryRate = 480; // Скорость восстановления в час
     const now = new Date();
-    const lastUpdateDate = new Date(lastTime);
+    const lastUpdateDate = new Date(lastUpdated);
     const hoursPassed = (now - lastUpdateDate) / 3600000; // Прошедшие часы
 
     return Math.round(Math.min(100, fatigueLevel + hoursPassed * recoveryRate));
@@ -128,10 +128,10 @@ app.get('/load/:telegramId', (req, res) => {
             return res.status(500).send('Database error');
         }
         if (row) {
-            const updatedFatigue = calculateFatigueRecovery(row.fatigueLevel, row.lastTime);
+            const updatedFatigue = calculateFatigueRecovery(row.fatigueLevel, row.lastUpdated);
             const now = new Date().toISOString();
             db.run(
-                `UPDATE users SET fatigueLevel = ?, lastTime = ? WHERE telegramId = ?`,
+                `UPDATE users SET fatigueLevel = ?, lastUpdated = ? WHERE telegramId = ?`,
                 [updatedFatigue, now, telegramId],
                 (updateErr) => {
                     if (updateErr) {
@@ -139,7 +139,7 @@ app.get('/load/:telegramId', (req, res) => {
                         return res.status(500).send('Database update error');
                     }
                     row.fatigueLevel = updatedFatigue;
-                    row.lastTime = now;
+                    row.lastUpdated = now;
                     console.log(`Данные обновлены для Telegram ID: ${telegramId}`);
                     res.json(row);
                 }
