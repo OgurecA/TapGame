@@ -281,10 +281,10 @@ function loadGameData(telegramId) {
                 document.getElementById('energy-points').innerText = data.fatigueLevel;
                 document.getElementById('experience-amount').innerText = data.experienceAmount;
 				
-				document.getElementById('count').innerText = data.clickCount;
-				document.getElementById('experienceLevel').innerText = data.experienceLevel;
-				document.getElementById('experienceAmount').innerText = data.experienceAmount;
-				document.getElementById('fatigueLevel').innerText = data.fatigueLevel;
+				let count = data.clickCount;
+				let experienceLevel = data.experienceLevel;
+				let experienceAmount = data.experienceAmount;
+				let fatigueLevel = data.fatigueLevel;
             }
         })
         .catch(error => console.error('Ошибка при загрузке данных:', error));
