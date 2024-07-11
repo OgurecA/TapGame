@@ -31,7 +31,8 @@ const db = new sqlite3.Database('./clickerGame.db', sqlite3.OPEN_READWRITE | sql
             clickCount INTEGER DEFAULT 0,
             fatigueLevel INTEGER DEFAULT 100,
             experienceLevel INTEGER DEFAULT 0,
-            experienceAmount INTEGER DEFAULT 0
+            experienceAmount INTEGER DEFAULT 0,
+			lastUpdated DEFAULT CURRENT_TIMESTAMP
         )`, (err) => {
             if (err) {
                 console.error('Ошибка при создании таблицы пользователей:', err);
@@ -41,8 +42,6 @@ const db = new sqlite3.Database('./clickerGame.db', sqlite3.OPEN_READWRITE | sql
         });
     }
 });
-
-db.run(`ALTER TABLE users ADD COLUMN lastUpdated TIMESTAMP`);
 
 
 function getUserData(telegramId, callback) {
