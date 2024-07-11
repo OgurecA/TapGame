@@ -259,12 +259,16 @@ const telegramId = window.location.pathname.split('/')[1]; // Получение
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    const telegramId = window.location.pathname.split('/')[1]; // Предполагается, что ID находится в URL
-		if (window.Telegram.WebApp) {
+    const telegramId = window.location.pathname.split('/')[1]; // Получение ID пользователя из URL
+
+    // Запускаем загрузку данных игры
+    loadGameData(telegramId);
+
+    // Проверяем наличие и инициализируем Telegram WebApp
+    if (window.Telegram && window.Telegram.WebApp) {
         Telegram.WebApp.ready();
         Telegram.WebApp.expand();
-}
-    loadGameData(telegramId);
+    }
 });
 
 
