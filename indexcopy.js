@@ -31,7 +31,8 @@ const db = new sqlite3.Database('./clickerGame.db', sqlite3.OPEN_READWRITE | sql
             clickCount INTEGER DEFAULT 0,
             fatigueLevel INTEGER DEFAULT 100,
             experienceLevel INTEGER DEFAULT 0,
-            experienceAmount INTEGER DEFAULT 0
+            experienceAmount INTEGER DEFAULT 0,
+			lastTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )`, (err) => {
             if (err) {
                 console.error('Ошибка при создании таблицы пользователей:', err);
@@ -41,6 +42,7 @@ const db = new sqlite3.Database('./clickerGame.db', sqlite3.OPEN_READWRITE | sql
         });
     }
 });
+
 
 function getUserData(telegramId, callback) {
     db.get("SELECT * FROM users WHERE telegramId = ?", [telegramId], (err, row) => {
@@ -61,6 +63,7 @@ app.post('/:telegramId', (req, res) => {
     console.log('Получен POST запрос для:', req.params.telegramId); // Логирование при получении запроса
     const telegramId = req.params.telegramId;
     const { clickCount, fatigueLevel, experienceLevel, experienceAmount } = req.body;
+	const lastTime = new Date().toISOString();
     console.log('Данные для обновления:', req.body); // Логирование полученных данных
 
     db.run(
@@ -92,13 +95,29 @@ app.get('/:telegramId', (req, res) => {
                 ExperienceAmount: ${row.experienceAmount}`);
 			res.sendFile(path.join(__dirname, 'CLICK', 'clicker.html'));
         } else {
-            console.log(`Пользователь ${telegramId} не найден.`);
-            res.redirect(`/${telegramId}`);
+            console.log(`Пользователь не найден, регистрируем и перенаправляем`);
+            db.run(`INSERT INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, 0, 100, 0, 0)`,
+            [telegramId], function(err) {
+                if (err) {
+                    console.error('Ошибка при регистрации нового пользователя:', err);
+                    return res.status(500).send('Failed to register user');
+                } else {
+					res.redirect(`/${telegramId}`);
+				}
+            });
         }
 		
     });
 });
 
+function calculateFatigueRecovery(fatigueLevel, lastTime) {
+    const recoveryRate = 240; // Скорость восстановления в час
+    const now = new Date();
+    const lastUpdateDate = new Date(lastTime);
+    const hoursPassed = (now - lastUpdateDate) / 3600000; // Прошедшие часы
+
+    return Math.round(Math.min(100, fatigueLevel + hoursPassed * recoveryRate));
+}
 
 // Загрузка данных игры для конкретного пользователя
 app.get('/load/:telegramId', (req, res) => {
@@ -109,20 +128,24 @@ app.get('/load/:telegramId', (req, res) => {
             return res.status(500).send('Database error');
         }
         if (row) {
-            // Пользователь найден, перенаправляем на страницу с игрой
-			console.log(`Данные найдены для Telegram ID: ${telegramId}`);
-            res.json(row);
+            const updatedFatigue = calculateFatigueRecovery(row.fatigueLevel, row.lastUpdated);
+            const now = new Date().toISOString();
+            db.run(
+                `UPDATE users SET fatigueLevel = ?, lastUpdated = ? WHERE telegramId = ?`,
+                [updatedFatigue, now, telegramId],
+                (updateErr) => {
+                    if (updateErr) {
+                        console.error('Ошибка при обновлении данных пользователя:', updateErr);
+                        return res.status(500).send('Database update error');
+                    }
+                    row.fatigueLevel = updatedFatigue;
+                    row.lastUpdated = now;
+                    console.log(`Данные обновлены для Telegram ID: ${telegramId}`);
+                    res.json(row);
+                }
+            );
         } else {
-            // Пользователь не найден, регистрируем и перенаправляем
-            db.run(`INSERT INTO users (telegramId, clickCount, fatigueLevel, experienceLevel, experienceAmount) VALUES (?, 0, 100, 0, 0)`,
-            [telegramId], function(err) {
-                if (err) {
-                    console.error('Ошибка при регистрации нового пользователя:', err);
-                    return res.status(500).send('Failed to register user');
-                } else {
-					res.redirect(`/${telegramId}`);
-				}
-            });
+            res.status(404).send('User not found');
         }
     });
 });
