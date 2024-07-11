@@ -32,7 +32,7 @@ const db = new sqlite3.Database('./clickerGame.db', sqlite3.OPEN_READWRITE | sql
             fatigueLevel INTEGER DEFAULT 100,
             experienceLevel INTEGER DEFAULT 0,
             experienceAmount INTEGER DEFAULT 0,
-			lastUpdated DEFAULT CURRENT_TIMESTAMP
+			lastTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )`, (err) => {
             if (err) {
                 console.error('Ошибка при создании таблицы пользователей:', err);
@@ -63,7 +63,7 @@ app.post('/:telegramId', (req, res) => {
     console.log('Получен POST запрос для:', req.params.telegramId); // Логирование при получении запроса
     const telegramId = req.params.telegramId;
     const { clickCount, fatigueLevel, experienceLevel, experienceAmount } = req.body;
-	const lastUpdated = new Date().toISOString();
+	const lastTime = new Date().toISOString();
     console.log('Данные для обновления:', req.body); // Логирование полученных данных
 
     db.run(
@@ -110,6 +110,14 @@ app.get('/:telegramId', (req, res) => {
     });
 });
 
+function calculateFatigueRecovery(fatigueLevel, lastTime) {
+    const recoveryRate = 480; // Скорость восстановления в час
+    const now = new Date();
+    const lastUpdateDate = new Date(lastTime);
+    const hoursPassed = (now - lastUpdateDate) / 3600000; // Прошедшие часы
+
+    return Math.min(100, fatigueLevel + hoursPassed * recoveryRate);
+}
 
 // Загрузка данных игры для конкретного пользователя
 app.get('/load/:telegramId', (req, res) => {
@@ -120,10 +128,21 @@ app.get('/load/:telegramId', (req, res) => {
             return res.status(500).send('Database error');
         }
         if (row) {
-            // Пользователь найден, перенаправляем на страницу с игрой
-			console.log(`Данные найдены для Telegram ID: ${telegramId}`);
-            res.json(row);
-        }
+            const updatedFatigue = calculateFatigueRecovery(row.fatigueLevel, row.lastUpdated);
+            const now = new Date().toISOString();
+            db.run(
+                `UPDATE users SET fatigueLevel = ?, lastUpdated = ? WHERE telegramId = ?`,
+                [updatedFatigue, now, telegramId],
+                (updateErr) => {
+                    if (updateErr) {
+                        console.error('Ошибка при обновлении данных пользователя:', updateErr);
+                        return res.status(500).send('Database update error');
+                    }
+                    row.fatigueLevel = updatedFatigue;
+                    row.lastUpdated = now;
+                    console.log(`Данные обновлены для Telegram ID: ${telegramId}`);
+                    res.json(row);
+                }
     });
 });
 
