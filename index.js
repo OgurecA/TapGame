@@ -42,6 +42,10 @@ const db = new sqlite3.Database('./clickerGame.db', sqlite3.OPEN_READWRITE | sql
     }
 });
 
+db.run(`
+  ALTER TABLE users ADD COLUMN lastUpdated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+`);
+
 function getUserData(telegramId, callback) {
     db.get("SELECT * FROM users WHERE telegramId = ?", [telegramId], (err, row) => {
         if (err) {
@@ -61,6 +65,7 @@ app.post('/:telegramId', (req, res) => {
     console.log('Получен POST запрос для:', req.params.telegramId); // Логирование при получении запроса
     const telegramId = req.params.telegramId;
     const { clickCount, fatigueLevel, experienceLevel, experienceAmount } = req.body;
+	const lastUpdated = new Date().toISOString();
     console.log('Данные для обновления:', req.body); // Логирование полученных данных
 
     db.run(
