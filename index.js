@@ -143,7 +143,8 @@ app.get('/load/:telegramId', (req, res) => {
                     console.log(`Данные обновлены для Telegram ID: ${telegramId}`);
                     res.json(row);
                 }
-    });
+		);}
+    }
 });
 
 
