@@ -261,6 +261,10 @@ const telegramId = window.location.pathname.split('/')[1]; // Получение
 document.addEventListener('DOMContentLoaded', function() {
     const telegramId = window.location.pathname.split('/')[1]; // Предполагается, что ID находится в URL
     loadGameData(telegramId);
+	if (window.Telegram.WebApp) {
+        Telegram.WebApp.ready();
+        Telegram.WebApp.expand();
+	}
 });
 
 if (window.Telegram.WebApp) {
