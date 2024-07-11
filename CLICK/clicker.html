@@ -24,11 +24,14 @@
     user-select: none; /* Non-prefixed version, currently supported by Chrome, Opera and Firefox */
     touch-action: manipulation; /* CSS property to disable pinch-zooming */
 }
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%; /* Убедитесь, что элементы занимают всю высоту экрана */
+}
+
 body {
     background-repeat: no-repeat;
-    background-size: cover;
-    height: 70vh;
-	background-position: center 20vh;
 	background-color: black;
 }
 #fatigue-bar-container {
@@ -263,12 +266,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Запускаем загрузку данных игры
     loadGameData(telegramId);
-
-    // Проверяем наличие и инициализируем Telegram WebApp
-    if (window.Telegram && window.Telegram.WebApp) {
-        Telegram.WebApp.ready();
-        Telegram.WebApp.expand();
-    }
 });
 
 
