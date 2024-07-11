@@ -110,10 +110,10 @@ app.get('/:telegramId', (req, res) => {
     });
 });
 
-function calculateFatigueRecovery(fatigueLevel, lastUpdated) {
+function calculateFatigueRecovery(fatigueLevel, lastTime) {
     const recoveryRate = 480; // Скорость восстановления в час
     const now = new Date();
-    const lastUpdateDate = new Date(lastUpdated);
+    const lastUpdateDate = new Date(lastTime);
     const hoursPassed = (now - lastUpdateDate) / 3600000; // Прошедшие часы
 
     return Math.round(Math.min(100, fatigueLevel + hoursPassed * recoveryRate));
