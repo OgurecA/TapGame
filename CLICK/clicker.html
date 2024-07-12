@@ -341,15 +341,15 @@ function checkCombo() {
 
     if (timeDiff < comboThreshold) {
         comboCount++;
-        if (comboCount => 3) {
+        if (comboCount == 2) {
             if (timeDiff < resetThreshold) {
                 comboCount = 0;
                 return 1;
             }
             comboCount = 0; // Сброс счетчика комбо после третьего клика
-            return 1;
+            return 10;
         }
-        return 10;
+        return 1;
     } else {
         comboCount = 0; // Сброс счетчика комбо, если время между кликами превысило порог
         return 1;
