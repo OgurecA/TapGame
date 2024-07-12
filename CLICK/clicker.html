@@ -269,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function() {
         telegramId = Telegram.WebApp.init().user.id;  // Получаем user_id пользователя из Telegram
 		console.log("Telegram ID:", telegramId);
         Telegram.WebApp.expand(); // Расширяем приложение на весь экран
-		const newUrl = `https://boxinglab.online/${telegramId}`;
+		const newUrl = `https://boxinglab.online/load/${telegramId}`;
     }
 	if (!currentUrl.includes(telegramId)) {
             window.location.href = newUrl;
