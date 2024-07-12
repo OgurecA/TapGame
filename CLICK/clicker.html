@@ -260,7 +260,9 @@ const maxExperience = 10;
 let experienceAmount = 0;
 const telegramId = window.location.pathname.split('/')[1]; // Получение ID из URL
 let lastClickTime = 0; // Переменная для хранения времени последнего клика
+let comboCount = 0;
 const comboThreshold = 300; // Порог времени в миллисекундах для комбо удара (300 мс)
+const resetThreshold = 1000;
 
 
 
@@ -337,7 +339,22 @@ function checkCombo() {
     const timeDiff = currentTime - lastClickTime;
     lastClickTime = currentTime;
 
-    return timeDiff < comboThreshold ? 10 : 1; // Возвращает 10 если комбо, иначе 1
+    if (timeDiff < comboThreshold) {
+        comboCount++;
+        if (comboCount == 3) {
+            if (timeDiff > resetThreshold) {
+                // Сброс комбо после третьего клика, если прошло больше 1 секунды
+                comboCount = 0;
+                return 1;
+            }
+            comboCount = 0; // Сброс счетчика комбо после третьего клика
+            return 10;
+        }
+        return 10;
+    } else {
+        comboCount = 0; // Сброс счетчика комбо, если время между кликами превысило порог
+        return 1;
+    }
 }
 
 function increaseCount(multiplier) {
@@ -400,7 +417,7 @@ setInterval(() => {
         fatigueLevel++;
         updateFatigueBar();
     }
-}, 60000);  // Каждые 3000 мс (3 секунды)
+}, 1000);  // Каждые 3000 мс (3 секунды)
 
 
 
