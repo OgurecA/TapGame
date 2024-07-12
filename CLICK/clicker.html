@@ -222,6 +222,7 @@ body {
 <div class="clicker-game">
     <img src="/slim.jpg" id="boxer" alt="Boxer">
 	<span id="clickCount">0</span>
+	<button id="clickArea" class="click-button">Click me!</button>
 </div>
 <div id="slogan">
     <a href="https://example.com" target="_blank" rel="noopener noreferrer" class="slogan-link">
@@ -335,11 +336,7 @@ setInterval(async () => {
 
 
 
-function checkCombo() {
-    
-}
-
-document.getElementById('boxer').document.addEventListener('click', function() {
+document.getElementById('clickArea').addEventListener('click', function() {
     const now = Date.now();
     const timeSinceLastClick = now - lastClickTime;
     console.log("Click registered:", now, "Time since last click:", timeSinceLastClick); // Логируем каждый клик и время с последнего клика
