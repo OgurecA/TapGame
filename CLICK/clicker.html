@@ -259,6 +259,9 @@ let experienceLevel = 0;
 const maxExperience = 10;
 let experienceAmount = 0;
 const telegramId = window.location.pathname.split('/')[1]; // Получение ID из URL
+let lastClickTime = 0; // Переменная для хранения времени последнего клика
+const comboThreshold = 300; // Порог времени в миллисекундах для комбо удара (300 мс)
+
 
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -329,24 +332,52 @@ setInterval(async () => {
 
 
 
-function increaseCount() {
-    if (fatigueLevel > 0) { // Увеличиваем счетчик только если есть усталость
-        count++;
-        document.getElementById('clickCount').innerText = count; // Обновляем отображаемое значение счетчика
+function increaseCount(combo = false) {
+    if (fatigueLevel > 0) {
+        let pointsToAdd = 1; // Базовое количество очков за клик
+        if (combo) {
+            pointsToAdd = 10; // Если комбо, добавляем 10 очков
+        }
+        count += pointsToAdd;
+        document.getElementById('clickCount').innerText = count;
         decreaseFatigue(); // Уменьшаем уровень усталости при каждом клике
     }
 }
 
-function increaseExperience() {
-    experienceLevel++;
+function increaseExperience(combo = false) {
+    let experienceToAdd = 1; // Базовое количество опыта за клик
+    if (combo) {
+        experienceToAdd = 10; // Если комбо, добавляем 10 опыта
+    }
     if (experienceLevel >= maxExperience) {
-        experienceLevel = 0;
+        experienceLevel -= maxExperience;
         experienceAmount++;
         document.getElementById('experience-amount').innerText = experienceAmount;
     }
     updateExperienceBar();
     document.getElementById('XP-points').innerText = experienceLevel; // Обновляем текущее количество делений
 }
+
+document.getElementById('boxer').addEventListener('click', function() {
+	const currentTime = Date.now();
+    const timeDiff = currentTime - lastClickTime;
+    lastClickTime = currentTime;
+	
+    if (fatigueLevel > 0) {
+		if (timeDiff < comboThreshold) {
+			increaseCount(true);
+			increaseExperience(true);
+		}
+		else {
+            increaseCount();
+			increaseExperience();
+		}
+	}
+    this.classList.add('enlarge');
+    setTimeout(() => {
+        this.classList.remove('enlarge');
+    }, 100);
+});
 
 function updateExperienceBar() {
     const experienceBar = document.getElementById('experience-bar');
@@ -377,17 +408,7 @@ setInterval(() => {
     }
 }, 60000);  // Каждые 3000 мс (3 секунды)
 
-document.getElementById('boxer').addEventListener('click', function() {
-    if (fatigueLevel > 0) {
-        increaseCount();
-        increaseExperience();
-    }
-    this.classList.add('enlarge');
-    setTimeout(() => {
-        this.classList.remove('enlarge');
-    }, 100);
-	saveGameData();
-});
+
 
 
 document.addEventListener('selectstart', function(event) {
