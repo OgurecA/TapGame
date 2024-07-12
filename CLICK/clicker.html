@@ -419,7 +419,7 @@ function processClickBuffer() {
     console.log("Processing buffer:", clickBuffer);
     if (clickBuffer.length === 1) {
         morseCode += ".";
-    } else if (clickBuffer.length === 2) {
+    } else if (clickBuffer.length >= 2) {
         morseCode += "-";
     }
     console.log("Current Morse Code:", morseCode);
