@@ -339,7 +339,7 @@ function checkCombo() {
     
 }
 
-document.addEventListener('click', function() {
+document.getElementById('boxer').document.addEventListener('click', function() {
     const now = Date.now();
     const timeSinceLastClick = now - lastClickTime;
     console.log("Click registered:", now, "Time since last click:", timeSinceLastClick); // Логируем каждый клик и время с последнего клика
