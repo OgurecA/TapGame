@@ -336,7 +336,7 @@ function increaseCount(combo = false) {
     if (fatigueLevel > 0) {
         let pointsToAdd = 1; // Базовое количество очков за клик
         if (combo) {
-            pointsToAdd = 10; // Если комбо, добавляем 10 очков
+            pointsToAdd = 9; // Если комбо, добавляем 10 очков
         }
         count += pointsToAdd;
         document.getElementById('clickCount').innerText = count;
@@ -346,14 +346,15 @@ function increaseCount(combo = false) {
 
 function increaseExperience(combo = false) {
     let experienceToAdd = 1; // Базовое количество опыта за клик
-    if (combo) {
-        experienceToAdd = 10; // Если комбо, добавляем 10 опыта
-    }
-    if (experienceLevel >= maxExperience) {
+		if (combo) {
+        experienceToAdd = 9; // Если комбо, добавляем 10 опыта
+		}
+		experienceLevel += experienceToAdd;
+		if (experienceLevel >= maxExperience) {
         experienceLevel -= maxExperience;
         experienceAmount++;
         document.getElementById('experience-amount').innerText = experienceAmount;
-    }
+		}
     updateExperienceBar();
     document.getElementById('XP-points').innerText = experienceLevel; // Обновляем текущее количество делений
 }
