@@ -262,7 +262,7 @@ let telegramId;
 
 
 document.addEventListener('DOMContentLoaded', function() {
-	const currentUrl = window.location.href;
+	let currentUrl = window.location.href;
     // Проверяем, запущено ли приложение в контексте Telegram WebApp
     if (window.Telegram && window.Telegram.WebApp) {
         Telegram.WebApp.ready();
