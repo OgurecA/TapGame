@@ -244,6 +244,9 @@ body {
     <p>XP: <span id="XP-points">0</span>/10</p>
 </div>
 <div id="bottom-bar"></div>
+
+<div><button id="clickArea">Click me</button></div>
+
 <a href="https://example.com/link1" id="youtube" class="button" target="_blank" rel="noopener noreferrer"></a>
 <a href="https://example.com/link2" id="X" class="button" target="_blank" rel="noopener noreferrer"></a>
 <a href="https://example.com/link3" id="web" class="button" target="_blank" rel="noopener noreferrer"></a>
@@ -335,7 +338,7 @@ setInterval(async () => {
 }, 20000); // Интервал сохранения - 2000 мс (2 секунды)
 
 
-document.addEventListener('click', function() {
+document.getElementById('clickArea').addEventListener('click', function() {
     const now = Date.now();
     const timeSinceLastClick = now - lastClickTime;
     console.log("Click registered:", now, "Time since last click:", timeSinceLastClick); // Логируем каждый клик и время с последнего клика
