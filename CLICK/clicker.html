@@ -222,7 +222,6 @@ body {
 <div class="clicker-game">
     <img src="/slim.jpg" id="boxer" alt="Boxer">
 	<span id="clickCount">0</span>
-	<button id="clickArea" class="click-button">Click me!</button>
 </div>
 <div id="slogan">
     <a href="https://example.com" target="_blank" rel="noopener noreferrer" class="slogan-link">
@@ -336,28 +335,6 @@ setInterval(async () => {
 
 
 
-document.getElementById('clickArea').addEventListener('click', function() {
-    const now = Date.now();
-    const timeSinceLastClick = now - lastClickTime;
-    console.log("Click registered:", now, "Time since last click:", timeSinceLastClick); // Логируем каждый клик и время с последнего клика
-    lastClickTime = now;
-
-    if (timeSinceLastClick < clickThreshold) {
-        clickBuffer.push(now);
-    } else {
-        processClickBuffer(); // Обрабатываем накопленные клики
-        clickBuffer = [now];
-    }
-
-    // Проверяем, необходимо ли обработать буфер после тайм-аута
-    setTimeout(() => {
-        if (Date.now() - lastClickTime >= endSymbolThreshold) {
-            console.log("Timeout triggered: processing buffer");
-            processClickBuffer();
-        }
-    }, endSymbolThreshold);
-});
-
 function processClickBuffer() {
     console.log("Processing buffer:", clickBuffer); // Логируем содержимое буфера перед обработкой
     if (clickBuffer.length === 1) {
@@ -391,6 +368,26 @@ function increaseExperience(multiplier) {
 }
 
 document.getElementById('boxer').addEventListener('click', function() {
+	const now = Date.now();
+    const timeSinceLastClick = now - lastClickTime;
+    console.log("Click registered:", now, "Time since last click:", timeSinceLastClick); // Логируем каждый клик и время с последнего клика
+    lastClickTime = now;
+
+    if (timeSinceLastClick < clickThreshold) {
+        clickBuffer.push(now);
+    } else {
+        processClickBuffer(); // Обрабатываем накопленные клики
+        clickBuffer = [now];
+    }
+
+    // Проверяем, необходимо ли обработать буфер после тайм-аута
+    setTimeout(() => {
+        if (Date.now() - lastClickTime >= endSymbolThreshold) {
+            console.log("Timeout triggered: processing buffer");
+            processClickBuffer();
+        }
+    }, endSymbolThreshold);
+});
 	if (fatigueLevel > 0) {
 		const comboMultiplier = checkCombo(); // Проверяем комбо и получаем множитель
 		increaseCount(comboMultiplier);
