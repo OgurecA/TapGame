@@ -111,13 +111,19 @@ app.get('/:telegramId', (req, res) => {
 });
 
 function calculateFatigueRecovery(fatigueLevel, lastTime) {
-    const recoveryRate = 240; // Скорость восстановления в час
+    const recoveryRate = 30; // Скорость восстановления в час
     const now = new Date();
     const lastUpdateDate = new Date(lastTime);
     const hoursPassed = (now - lastUpdateDate) / 3600000; // Прошедшие часы
 
     return Math.round(Math.min(100, fatigueLevel + hoursPassed * recoveryRate));
 }
+
+app.get('/', (req, res) => {
+    // Здесь можно проверить наличие каких-либо параметров или cookies, если нужно
+    // Если нет информации о пользователе, отправляем на стандартную страницу
+    res.sendFile(path.join(__dirname, 'CLICK', 'clicker.html'));
+});
 
 // Загрузка данных игры для конкретного пользователя
 app.get('/load/:telegramId', (req, res) => {
