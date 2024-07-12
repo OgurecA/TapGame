@@ -342,7 +342,7 @@ function checkCombo() {
     if (timeDiff < comboThreshold) {
         comboCount++;
         if (comboCount == 3) {
-            if (timeDiff > resetThreshold) {
+            if (timeDiff < resetThreshold) {
                 // Сброс комбо после третьего клика, если прошло больше 1 секунды
                 comboCount = 0;
                 return 1;
@@ -350,7 +350,7 @@ function checkCombo() {
             comboCount = 0; // Сброс счетчика комбо после третьего клика
             return 10;
         }
-        return 10;
+        return 1;
     } else {
         comboCount = 0; // Сброс счетчика комбо, если время между кликами превысило порог
         return 1;
