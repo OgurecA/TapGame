@@ -259,11 +259,12 @@ let experienceLevel = 0;
 const maxExperience = 10;
 let experienceAmount = 0;
 const telegramId = window.location.pathname.split('/')[1]; // Получение ID из URL
-let lastClickTime = 0; // Переменная для хранения времени последнего клика
-let comboCount = 0;
-const comboThreshold = 300; // Порог времени в миллисекундах для комбо удара (300 мс)
-const resetThreshold = 1000;
 
+let lastClickTime = 0;
+let clickBuffer = [];
+let morseCode = "";
+const clickThreshold = 300; // Максимальное время между кликами в миллисекундах для одного символа
+const endSymbolThreshold = 1000;
 
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -335,26 +336,42 @@ setInterval(async () => {
 
 
 function checkCombo() {
-    const currentTime = Date.now();
-    const timeDiff = currentTime - lastClickTime;
-    lastClickTime = currentTime;
-
-    if (timeDiff < comboThreshold) {
-        comboCount++;
-        if (comboCount == 3) {
-            if (timeDiff < resetThreshold) {
-                comboCount = 0;
-                return 1;
-            }
-            comboCount = 0; // Сброс счетчика комбо после третьего клика
-            return 10;
-        }
-        return 1;
-    } else {
-        comboCount = 0; // Сброс счетчика комбо, если время между кликами превысило порог
-        return 1;
-    }
+    
 }
+
+document.addEventListener('click', function() {
+    const now = Date.now();
+    const timeSinceLastClick = now - lastClickTime;
+    lastClickTime = now;
+
+    if (timeSinceLastClick < clickThreshold) {
+        // Если время между кликами меньше порога, добавляем клик в буфер
+        clickBuffer.push(now);
+    } else {
+        // Обработка буфера кликов
+        processClickBuffer();
+        // Сброс буфера и начало новой серии кликов
+        clickBuffer = [now];
+    }
+
+    // Проверка на завершение символа по тайм-ауту
+    setTimeout(() => {
+        if (Date.now() - lastClickTime >= endSymbolThreshold) {
+            processClickBuffer();
+        }
+    }, endSymbolThreshold);
+});
+
+function processClickBuffer() {
+    if (clickBuffer.length === 1) {
+        morseCode += ".";
+    } else if (clickBuffer.length === 2) {
+        morseCode += "-";
+    }
+    console.log("Current Morse Code:", morseCode);
+    clickBuffer = [];
+}
+
 
 function increaseCount(multiplier) {
     if (fatigueLevel > 0) {
