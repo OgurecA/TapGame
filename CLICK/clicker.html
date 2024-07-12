@@ -260,12 +260,6 @@ const maxExperience = 10;
 let experienceAmount = 0;
 const telegramId = window.location.pathname.split('/')[1]; // Получение ID из URL
 
-let lastClickTime = 0;
-let clickBuffer = [];
-let morseCode = "";
-const clickThreshold = 400; // Максимальное время между кликами в миллисекундах для одного символа
-const endSymbolThreshold = 1000;
-
 
 document.addEventListener('DOMContentLoaded', function() {
     const telegramId = window.location.pathname.split('/')[1]; // Получение ID пользователя из URL
@@ -331,73 +325,28 @@ setInterval(async () => {
     } catch (error) {
         console.error('Ошибка при сохранении данных:', error);
     }
-}, 200000); // Интервал сохранения - 2000 мс (2 секунды)
+}, 20000); // Интервал сохранения - 2000 мс (2 секунды)
 
 
 
-function processClickBuffer() {
-    console.log("Processing buffer:", clickBuffer); // Логируем содержимое буфера перед обработкой
-    if (clickBuffer.length === 1) {
-        morseCode += ".";
-    } else if (clickBuffer.length === 2) {
-        morseCode += "-";
-    }
-    console.log("Current Morse Code:", morseCode); // Выводим текущий скомпилированный код Морзе
-    clickBuffer = [];
-}
-
-function increaseCount(multiplier) {
-    if (fatigueLevel > 0) {
-        count += multiplier; // Увеличиваем счет с учетом множителя комбо
-        document.getElementById('clickCount').innerText = count;
-        decreaseFatigue();
+function increaseCount() {
+    if (fatigueLevel > 0) { // Увеличиваем счетчик только если есть усталость
+        count++;
+        document.getElementById('clickCount').innerText = count; // Обновляем отображаемое значение счетчика
+        decreaseFatigue(); // Уменьшаем уровень усталости при каждом клике
     }
 }
 
-function increaseExperience(multiplier) {
-    experienceLevel += multiplier; // Увеличиваем опыт с учетом множителя комбо
-
-    while (experienceLevel >= maxExperience) {
-        experienceLevel -= maxExperience;
+function increaseExperience() {
+    experienceLevel++;
+    if (experienceLevel >= maxExperience) {
+        experienceLevel = 0;
         experienceAmount++;
         document.getElementById('experience-amount').innerText = experienceAmount;
     }
-
     updateExperienceBar();
-    document.getElementById('XP-points').innerText = experienceLevel;
+    document.getElementById('XP-points').innerText = experienceLevel; // Обновляем текущее количество делений
 }
-
-document.getElementById('boxer').addEventListener('click', function() {
-	const now = Date.now();
-    const timeSinceLastClick = now - lastClickTime;
-    console.log("Click registered:", now, "Time since last click:", timeSinceLastClick); // Логируем каждый клик и время с последнего клика
-    lastClickTime = now;
-
-    if (timeSinceLastClick < clickThreshold) {
-        clickBuffer.push(now);
-    } else {
-        processClickBuffer(); // Обрабатываем накопленные клики
-        clickBuffer = [now];
-    }
-
-    // Проверяем, необходимо ли обработать буфер после тайм-аута
-    setTimeout(() => {
-        if (Date.now() - lastClickTime >= endSymbolThreshold) {
-            console.log("Timeout triggered: processing buffer");
-            processClickBuffer();
-        }
-    }, endSymbolThreshold);
-});
-	if (fatigueLevel > 0) {
-		const comboMultiplier = checkCombo(); // Проверяем комбо и получаем множитель
-		increaseCount(comboMultiplier);
-		increaseExperience(comboMultiplier);
-    }
-    this.classList.add('enlarge');
-    setTimeout(() => {
-        this.classList.remove('enlarge');
-    }, 100);
-});
 
 function updateExperienceBar() {
     const experienceBar = document.getElementById('experience-bar');
@@ -426,10 +375,23 @@ setInterval(() => {
         fatigueLevel++;
         updateFatigueBar();
     }
-}, 1000);  // Каждые 3000 мс (3 секунды)
+}, 60000);  // Каждые 3000 мс (3 секунды)
 
+document.getElementById('boxer').addEventListener('click', function() {
+    if (fatigueLevel > 0) {
+        increaseCount();
+        increaseExperience();
+    }
+    this.classList.add('enlarge');
+    setTimeout(() => {
+        this.classList.remove('enlarge');
+    }, 100);
+	saveGameData();
+});
 
-
+window.addEventListener('dblclick', function(event) {
+    event.preventDefault();
+}, { passive: false });
 
 document.addEventListener('selectstart', function(event) {
     event.preventDefault();
