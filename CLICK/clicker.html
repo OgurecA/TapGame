@@ -244,9 +244,6 @@ body {
     <p>XP: <span id="XP-points">0</span>/10</p>
 </div>
 <div id="bottom-bar"></div>
-
-<div><button id="clickArea">Click me</button></div>
-
 <a href="https://example.com/link1" id="youtube" class="button" target="_blank" rel="noopener noreferrer"></a>
 <a href="https://example.com/link2" id="X" class="button" target="_blank" rel="noopener noreferrer"></a>
 <a href="https://example.com/link3" id="web" class="button" target="_blank" rel="noopener noreferrer"></a>
@@ -338,39 +335,6 @@ setInterval(async () => {
 }, 20000); // Интервал сохранения - 2000 мс (2 секунды)
 
 
-document.getElementById('clickArea').addEventListener('click', function() {
-    const now = Date.now();
-    const timeSinceLastClick = now - lastClickTime;
-    console.log("Click registered:", now, "Time since last click:", timeSinceLastClick); // Логируем каждый клик и время с последнего клика
-    lastClickTime = now;
-
-    if (timeSinceLastClick < clickThreshold) {
-        clickBuffer.push(now);
-    } else {
-        processClickBuffer(); // Обрабатываем накопленные клики
-        clickBuffer = [now];
-    }
-
-    // Проверяем, необходимо ли обработать буфер после тайм-аута
-    setTimeout(() => {
-        if (Date.now() - lastClickTime >= endSymbolThreshold) {
-            console.log("Timeout triggered: processing buffer");
-            processClickBuffer();
-        }
-    }, endSymbolThreshold);
-});
-
-function processClickBuffer() {
-    console.log("Processing buffer:", clickBuffer); // Логируем содержимое буфера перед обработкой
-    if (clickBuffer.length === 1) {
-        morseCode += ".";
-    } else if (clickBuffer.length === 2) {
-        morseCode += "-";
-    }
-    console.log("Current Morse Code:", morseCode); // Выводим текущий скомпилированный код Морзе
-    clickBuffer = [];
-}
-
 
 function increaseCount() {
     if (fatigueLevel > 0) { // Увеличиваем счетчик только если есть усталость
@@ -421,6 +385,25 @@ setInterval(() => {
 }, 60000);  // Каждые 3000 мс (3 секунды)
 
 document.getElementById('boxer').addEventListener('click', function() {
+    const now = Date.now();
+    const timeSinceLastClick = now - lastClickTime;
+    console.log("Click registered:", now, "Time since last click:", timeSinceLastClick);
+    lastClickTime = now;
+
+    if (timeSinceLastClick < clickThreshold) {
+        clickBuffer.push(now);
+    } else {
+        processClickBuffer(); // Обрабатываем накопленные клики
+        clickBuffer = [now];
+    }
+
+    setTimeout(() => {
+        if (Date.now() - lastClickTime >= endSymbolThreshold) {
+            console.log("Timeout triggered: processing buffer");
+            processClickBuffer();
+        }
+    }, endSymbolThreshold);
+
     if (fatigueLevel > 0) {
         increaseCount();
         increaseExperience();
@@ -429,8 +412,20 @@ document.getElementById('boxer').addEventListener('click', function() {
     setTimeout(() => {
         this.classList.remove('enlarge');
     }, 100);
-	saveGameData();
+    saveGameData();
 });
+
+function processClickBuffer() {
+    console.log("Processing buffer:", clickBuffer);
+    if (clickBuffer.length === 1) {
+        morseCode += ".";
+    } else if (clickBuffer.length === 2) {
+        morseCode += "-";
+    }
+    console.log("Current Morse Code:", morseCode);
+    clickBuffer = [];
+}
+
 
 window.addEventListener('dblclick', function(event) {
     event.preventDefault();
