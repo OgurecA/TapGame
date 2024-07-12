@@ -119,12 +119,6 @@ function calculateFatigueRecovery(fatigueLevel, lastTime) {
     return Math.round(Math.min(100, fatigueLevel + hoursPassed * recoveryRate));
 }
 
-app.get('/', (req, res) => {
-    // Здесь можно проверить наличие каких-либо параметров или cookies, если нужно
-    // Если нет информации о пользователе, отправляем на стандартную страницу
-    res.sendFile(path.join(__dirname, 'CLICK', 'clicker.html'));
-});
-
 // Загрузка данных игры для конкретного пользователя
 app.get('/load/:telegramId', (req, res) => {
     const telegramId = req.params.telegramId;
