@@ -81,6 +81,7 @@ app.post('/:telegramId', (req, res) => {
 });
 
 
+
 // Этот маршрут теперь будет отправлять HTML страницу, если найдет пользователя
 app.get('/:telegramId', (req, res) => {
     const telegramId = req.params.telegramId;
@@ -110,7 +111,7 @@ app.get('/:telegramId', (req, res) => {
 });
 
 function calculateFatigueRecovery(fatigueLevel, lastTime) {
-    const recoveryRate = 30; // Скорость восстановления в час
+    const recoveryRate = 240; // Скорость восстановления в час
     const now = new Date();
     const lastUpdateDate = new Date(lastTime);
     const hoursPassed = (now - lastUpdateDate) / 3600000; // Прошедшие часы
