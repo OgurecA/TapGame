@@ -260,6 +260,13 @@ const maxExperience = 10;
 let experienceAmount = 0;
 const telegramId = window.location.pathname.split('/')[1]; // Получение ID из URL
 
+let lastClickTime = 0;
+let clickBuffer = [];
+let morseCode = "";
+const clickThreshold = 300; // Максимальное время между кликами в миллисекундах для одного символа
+const endSymbolThreshold = 1000; // Время в миллисекундах, после которого символ считается завершенным
+
+
 
 document.addEventListener('DOMContentLoaded', function() {
     const telegramId = window.location.pathname.split('/')[1]; // Получение ID пользователя из URL
@@ -327,6 +334,39 @@ setInterval(async () => {
     }
 }, 20000); // Интервал сохранения - 2000 мс (2 секунды)
 
+
+document.addEventListener('click', function() {
+    const now = Date.now();
+    const timeSinceLastClick = now - lastClickTime;
+    console.log("Click registered:", now, "Time since last click:", timeSinceLastClick); // Логируем каждый клик и время с последнего клика
+    lastClickTime = now;
+
+    if (timeSinceLastClick < clickThreshold) {
+        clickBuffer.push(now);
+    } else {
+        processClickBuffer(); // Обрабатываем накопленные клики
+        clickBuffer = [now];
+    }
+
+    // Проверяем, необходимо ли обработать буфер после тайм-аута
+    setTimeout(() => {
+        if (Date.now() - lastClickTime >= endSymbolThreshold) {
+            console.log("Timeout triggered: processing buffer");
+            processClickBuffer();
+        }
+    }, endSymbolThreshold);
+});
+
+function processClickBuffer() {
+    console.log("Processing buffer:", clickBuffer); // Логируем содержимое буфера перед обработкой
+    if (clickBuffer.length === 1) {
+        morseCode += ".";
+    } else if (clickBuffer.length === 2) {
+        morseCode += "-";
+    }
+    console.log("Current Morse Code:", morseCode); // Выводим текущий скомпилированный код Морзе
+    clickBuffer = [];
+}
 
 
 function increaseCount() {
