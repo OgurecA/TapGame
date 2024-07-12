@@ -258,20 +258,21 @@ const totalParts = 100;
 let experienceLevel = 0;
 const maxExperience = 10;
 let experienceAmount = 0;
-let telegramId;
+const telegramId = window.location.pathname.split('/')[1]; // Получение ID из URL
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Проверяем, запущено ли приложение в контексте Telegram WebApp
+    const telegramId = window.location.pathname.split('/')[1]; // Получение ID пользователя из URL
+
+    // Запускаем загрузку данных игры
+    loadGameData(telegramId);
+	
+	
+    // Проверяем наличие и инициализируем Telegram WebApp
     if (window.Telegram && window.Telegram.WebApp) {
         Telegram.WebApp.ready();
-        telegramId = Telegram.WebApp.init().user.id;  // Получаем user_id пользователя из Telegram
-        Telegram.WebApp.expand(); // Расширяем приложение на весь экран
-		console.log("ID пользователя:", telegramId);
+        Telegram.WebApp.expand();
     }
-
-    // Запускаем загрузку данных игры с использованием telegramId
-    loadGameData(telegramId);
 });
 
 function loadGameData(telegramId) {
