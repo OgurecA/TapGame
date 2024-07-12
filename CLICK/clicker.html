@@ -332,48 +332,40 @@ setInterval(async () => {
 
 
 
-function increaseCount(combo = false) {
+function checkCombo() {
+    const currentTime = Date.now();
+    const timeDiff = currentTime - lastClickTime;
+    lastClickTime = currentTime;
+
+    return timeDiff < comboThreshold ? 10 : 1; // Возвращает 10 если комбо, иначе 1
+}
+
+function increaseCount(multiplier) {
     if (fatigueLevel > 0) {
-        let pointsToAdd = 1; // Базовое количество очков за клик
-        if (combo) {
-            pointsToAdd = 9; // Если комбо, добавляем 10 очков
-        }
-        count += pointsToAdd;
+        count += multiplier; // Увеличиваем счет с учетом множителя комбо
         document.getElementById('clickCount').innerText = count;
-        decreaseFatigue(); // Уменьшаем уровень усталости при каждом клике
+        decreaseFatigue();
     }
 }
 
-function increaseExperience(combo = false) {
-    let experienceToAdd = 1; // Базовое количество опыта за клик
-		if (combo) {
-        experienceToAdd = 9; // Если комбо, добавляем 10 опыта
-		}
-		experienceLevel += experienceToAdd;
-		if (experienceLevel >= maxExperience) {
+function increaseExperience(multiplier) {
+    experienceLevel += multiplier; // Увеличиваем опыт с учетом множителя комбо
+
+    while (experienceLevel >= maxExperience) {
         experienceLevel -= maxExperience;
         experienceAmount++;
         document.getElementById('experience-amount').innerText = experienceAmount;
-		}
+    }
+
     updateExperienceBar();
-    document.getElementById('XP-points').innerText = experienceLevel; // Обновляем текущее количество делений
+    document.getElementById('XP-points').innerText = experienceLevel;
 }
 
 document.getElementById('boxer').addEventListener('click', function() {
-	const currentTime = Date.now();
-    const timeDiff = currentTime - lastClickTime;
-    lastClickTime = currentTime;
-	
-    if (fatigueLevel > 0) {
-		if (timeDiff < comboThreshold) {
-			increaseCount(true);
-			increaseExperience(true);
-		}
-		else {
-            increaseCount();
-			increaseExperience();
-		}
-	}
+    const comboMultiplier = checkCombo(); // Проверяем комбо и получаем множитель
+    increaseCount(comboMultiplier);
+    increaseExperience(comboMultiplier);
+    
     this.classList.add('enlarge');
     setTimeout(() => {
         this.classList.remove('enlarge');
