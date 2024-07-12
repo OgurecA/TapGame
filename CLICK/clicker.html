@@ -345,16 +345,11 @@ document.addEventListener('click', function() {
     lastClickTime = now;
 
     if (timeSinceLastClick < clickThreshold) {
-        // Если время между кликами меньше порога, добавляем клик в буфер
         clickBuffer.push(now);
     } else {
-        // Обработка буфера кликов
         processClickBuffer();
-        // Сброс буфера и начало новой серии кликов
         clickBuffer = [now];
     }
-
-    // Проверка на завершение символа по тайм-ауту
     setTimeout(() => {
         if (Date.now() - lastClickTime >= endSymbolThreshold) {
             processClickBuffer();
@@ -404,6 +399,7 @@ document.getElementById('boxer').addEventListener('click', function() {
     setTimeout(() => {
         this.classList.remove('enlarge');
     }, 100);
+	processClickBuffer()
 });
 
 function updateExperienceBar() {
