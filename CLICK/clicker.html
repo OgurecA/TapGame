@@ -362,10 +362,11 @@ function increaseExperience(multiplier) {
 }
 
 document.getElementById('boxer').addEventListener('click', function() {
-    const comboMultiplier = checkCombo(); // Проверяем комбо и получаем множитель
-    increaseCount(comboMultiplier);
-    increaseExperience(comboMultiplier);
-    
+	if (fatigueLevel > 0) {
+		const comboMultiplier = checkCombo(); // Проверяем комбо и получаем множитель
+		increaseCount(comboMultiplier);
+		increaseExperience(comboMultiplier);
+    }
     this.classList.add('enlarge');
     setTimeout(() => {
         this.classList.remove('enlarge');
