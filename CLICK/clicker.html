@@ -263,8 +263,8 @@ const telegramId = window.location.pathname.split('/')[1]; // Получение
 let lastClickTime = 0;
 let clickBuffer = [];
 let morseCode = "";
-const clickThreshold = 300; // Максимальное время между кликами в миллисекундах для одного символа
-const endSymbolThreshold = 5000;
+const clickThreshold = 400; // Максимальное время между кликами в миллисекундах для одного символа
+const endSymbolThreshold = 1000;
 
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -342,31 +342,35 @@ function checkCombo() {
 document.addEventListener('click', function() {
     const now = Date.now();
     const timeSinceLastClick = now - lastClickTime;
+    console.log("Click registered:", now, "Time since last click:", timeSinceLastClick); // Логируем каждый клик и время с последнего клика
     lastClickTime = now;
 
     if (timeSinceLastClick < clickThreshold) {
         clickBuffer.push(now);
     } else {
-        processClickBuffer();
+        processClickBuffer(); // Обрабатываем накопленные клики
         clickBuffer = [now];
     }
+
+    // Проверяем, необходимо ли обработать буфер после тайм-аута
     setTimeout(() => {
         if (Date.now() - lastClickTime >= endSymbolThreshold) {
+            console.log("Timeout triggered: processing buffer");
             processClickBuffer();
         }
     }, endSymbolThreshold);
 });
 
 function processClickBuffer() {
+    console.log("Processing buffer:", clickBuffer); // Логируем содержимое буфера перед обработкой
     if (clickBuffer.length === 1) {
         morseCode += ".";
     } else if (clickBuffer.length === 2) {
         morseCode += "-";
     }
-    console.log("Current Morse Code:", morseCode);
+    console.log("Current Morse Code:", morseCode); // Выводим текущий скомпилированный код Морзе
     clickBuffer = [];
 }
-
 
 function increaseCount(multiplier) {
     if (fatigueLevel > 0) {
@@ -399,7 +403,6 @@ document.getElementById('boxer').addEventListener('click', function() {
     setTimeout(() => {
         this.classList.remove('enlarge');
     }, 100);
-	processClickBuffer()
 });
 
 function updateExperienceBar() {
