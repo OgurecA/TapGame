@@ -260,11 +260,12 @@ const maxExperience = 10;
 let experienceAmount = 0;
 const telegramId = window.location.pathname.split('/')[1]; // Получение ID из URL
 
-let clickBuffer = []; // Буфер для хранения временных меток кликов
-let morseCode = ""; // Накапливаемый код Морзе
-let comboTimer = null; // Таймер для определения комбо
-const comboThreshold = 300; // Порог времени для комбо в мс
-const resetThreshold = 1000; // Порог времени для сброса в мс
+const DOT_MAX_DURATION = 200;  // Максимальная длительность клика для "точки"
+const DASH_MIN_DURATION = 201; // Минимальная длительность клика для "тире"
+const SYMBOL_PAUSE = 2000;     // Максимальное время паузы между символами
+let lastClickTime = 0;
+let morseCode = '';
+let clickTimeout;
 
 
 
@@ -332,7 +333,7 @@ setInterval(async () => {
     } catch (error) {
         console.error('Ошибка при сохранении данных:', error);
     }
-}, 2000); // Интервал сохранения - 2000 мс (2 секунды)
+}, 20000); // Интервал сохранения - 2000 мс (2 секунды)
 
 
 
@@ -382,19 +383,9 @@ setInterval(() => {
         fatigueLevel++;
         updateFatigueBar();
     }
-}, 2000);  // Каждые 3000 мс (3 секунды)
+}, 500);  // Каждые 3000 мс (3 секунды)
 
 document.getElementById('boxer').addEventListener('click', function() {
-	
-	const now = Date.now();
-    clickBuffer.push(now);
-
-    if (comboTimer) clearTimeout(comboTimer); // Очистка предыдущего таймера комбо
-
-    comboTimer = setTimeout(() => {
-        processClicks(); // Обработка кликов после последнего в серии
-    }, comboThreshold);
-	
     if (fatigueLevel > 0) {
         increaseCount();
         increaseExperience();
@@ -406,31 +397,6 @@ document.getElementById('boxer').addEventListener('click', function() {
 	saveGameData();
 });
 
-function processClicks() {
-    const clicks = clickBuffer.length;
-    const intervals = clickBuffer.slice(1).map((time, index) => time - clickBuffer[index]);
-
-    if (clicks === 1) {
-        morseCode += '.';
-    } else {
-        // Определяем, является ли каждый интервал в пределах порога для тире
-        const isDashCombo = intervals.every(interval => interval < comboThreshold);
-        morseCode += isDashCombo ? '-' : '.';
-    }
-
-    console.log("Current Morse Code:", morseCode);
-    clickBuffer = []; // Сброс буфера после обработки
-}
-
-function resetBuffer() {
-    if (clickBuffer.length && (Date.now() - clickBuffer[clickBuffer.length - 1] > resetThreshold)) {
-        processClicks();
-    }
-    setTimeout(resetBuffer, resetThreshold / 2); // Проверяем условие сброса периодически
-}
-
-resetBuffer();
-
 window.addEventListener('dblclick', function(event) {
     event.preventDefault();
 }, { passive: false });
@@ -438,6 +404,36 @@ window.addEventListener('dblclick', function(event) {
 document.addEventListener('selectstart', function(event) {
     event.preventDefault();
 }, false);
+
+
+
+
+
+document.getElementById('boxer').addEventListener('mousedown', function() {
+    lastClickTime = Date.now(); // Засекаем время начала клика
+});
+
+document.getElementById('boxer').addEventListener('mouseup', function() {
+    const clickDuration = Date.now() - lastClickTime; // Вычисляем длительность клика
+    if (clickDuration < DOT_MAX_DURATION) {
+        morseCode += '.';
+    } else if (clickDuration >= DASH_MIN_DURATION) {
+        morseCode += '-';
+    }
+    processMorseCode();
+});
+
+function processMorseCode() {
+    clearTimeout(clickTimeout); // Очищаем предыдущий таймаут
+    clickTimeout = setTimeout(() => {
+        console.log("Morse Code:", morseCode); // Выводим полный код Морзе в консоль
+        morseCode = ''; // Сбрасываем код после обработки
+    }, SYMBOL_PAUSE);
+}
+
+
+
+
 
 
 
