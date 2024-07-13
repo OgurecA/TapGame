@@ -375,13 +375,14 @@ setInterval(() => {
         fatigueLevel++;
         updateFatigueBar();
     }
-}, 60000);  // Каждые 3000 мс (3 секунды)
+}, 5000);  // Каждые 3000 мс (3 секунды)
 
 document.getElementById('boxer').addEventListener('click', function() {
 	console.log('click');
     if (fatigueLevel > 0) {
         increaseCount();
         increaseExperience();
+		console.log('click');
     }
     this.classList.add('enlarge');
     setTimeout(() => {
