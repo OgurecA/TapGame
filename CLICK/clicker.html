@@ -378,16 +378,6 @@ setInterval(() => {
 }, 60000);  // Каждые 3000 мс (3 секунды)
 
 document.getElementById('boxer').addEventListener('click', function() {
-
-	const now = Date.now();
-    clickBuffer.push(now);
-
-    if (comboTimer) clearTimeout(comboTimer); // Очистка предыдущего таймера комбо
-
-    comboTimer = setTimeout(() => {
-        processClicks(); // Обработка кликов после последнего в серии
-    }, comboThreshold);
-
     if (fatigueLevel > 0) {
         increaseCount();
         increaseExperience();
@@ -398,29 +388,6 @@ document.getElementById('boxer').addEventListener('click', function() {
     }, 100);
 	saveGameData();
 });
-
-function processClicks() {
-    const clicks = clickBuffer.length;
-    const intervals = clickBuffer.slice(1).map((time, index) => time - clickBuffer[index]);
-
-    if (clicks === 1) {
-        morseCode += '.';
-    } else {
-        // Определяем, является ли каждый интервал в пределах порога для тире
-        const isDashCombo = intervals.every(interval => interval < comboThreshold);
-        morseCode += isDashCombo ? '-' : '.';
-    }
-
-    console.log("Current Morse Code:", morseCode);
-    clickBuffer = []; // Сброс буфера после обработки
-}
-
-function resetBuffer() {
-    if (clickBuffer.length && (Date.now() - clickBuffer[clickBuffer.length - 1] > resetThreshold)) {
-        processClicks();
-    }
-    setTimeout(resetBuffer, resetThreshold / 2); // Проверяем условие сброса периодически
-}
 
 window.addEventListener('dblclick', function(event) {
     event.preventDefault();
