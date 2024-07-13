@@ -258,19 +258,20 @@ const totalParts = 100;
 let experienceLevel = 0;
 const maxExperience = 10;
 let experienceAmount = 0;
-const telegramId = window.location.pathname.split('/')[1]; // Получение ID из URL
-
+let telegramId;
 
 document.addEventListener('DOMContentLoaded', function() {
-    const telegramId = window.location.pathname.split('/')[1]; // Получение ID пользователя из URL
-
-    // Запускаем загрузку данных игры
-    loadGameData(telegramId);
-
-    // Проверяем наличие и инициализируем Telegram WebApp
+    // Проверяем, запущено ли приложение в контексте Telegram WebApp
     if (window.Telegram && window.Telegram.WebApp) {
         Telegram.WebApp.ready();
-        Telegram.WebApp.expand();
+        telegramId = Telegram.WebApp.init().user.id;  // Получаем user_id пользователя из Telegram
+
+        console.log("Telegram ID:", telegramId); // Выводим ID в консоль для отладки
+
+        Telegram.WebApp.expand(); // Расширяем приложение на весь экран
+
+        // Загружаем данные игры для данного пользователя
+        loadGameData(telegramId);
     }
 });
 
@@ -328,18 +329,19 @@ setInterval(async () => {
 }, 2000); // Интервал сохранения - 2000 мс (2 секунды)
 
 
-function increaseCount(multiplier) {
-    if (fatigueLevel > 0) {
-        count += multiplier; // Увеличиваем счет с учетом множителя комбо
-        document.getElementById('clickCount').innerText = count;
-        decreaseFatigue();
+
+function increaseCount() {
+    if (fatigueLevel > 0) { // Увеличиваем счетчик только если есть усталость
+        count++;
+        document.getElementById('clickCount').innerText = count; // Обновляем отображаемое значение счетчика
+        decreaseFatigue(); // Уменьшаем уровень усталости при каждом клике
     }
 }
 
-function increaseExperience(multiplier) {
-    experienceLevel += multiplier; // Увеличиваем опыт с учетом множителя комбо
+function increaseExperience() {
+    experienceLevel++;
     if (experienceLevel >= maxExperience) {
-        experienceLevel -= maxExperience;
+        experienceLevel = 0;
         experienceAmount++;
         document.getElementById('experience-amount').innerText = experienceAmount;
     }
@@ -374,27 +376,12 @@ setInterval(() => {
         fatigueLevel++;
         updateFatigueBar();
     }
-}, 5000);  // Каждые 3000 мс (3 секунды)
-
-
-
-
+}, 60000);  // Каждые 3000 мс (3 секунды)
 
 document.getElementById('boxer').addEventListener('click', function() {
-
-	const now = Date.now();
-    clickBuffer.push(now);
-
-    if (comboTimer) clearTimeout(comboTimer); // Очистка предыдущего таймера комбо
-
-    comboTimer = setTimeout(() => {
-        processClicks(); // Обработка кликов после последнего в серии
-    }, comboThreshold);
-
-	const comboMultiplier = checkCombo(); // Проверяем комбо и получаем множитель
-    if (fatigueLevel > 0) {       
-		increaseCount(comboMultiplier);
-		increaseExperience(comboMultiplier);
+    if (fatigueLevel > 0) {
+        increaseCount();
+        increaseExperience();
     }
     this.classList.add('enlarge');
     setTimeout(() => {
@@ -402,62 +389,9 @@ document.getElementById('boxer').addEventListener('click', function() {
     }, 100);
 });
 
-
-
-
-
-
-
-function checkCombo() {
-    if (morseCode === ".."){
-		return 10;
-	} else {
-		return 1;
-	}
-	
-}
-
-
-
-function processClicks() {
-    const clicks = clickBuffer.length;
-    const intervals = clickBuffer.slice(1).map((time, index) => time - clickBuffer[index]);
-
-    if (clicks === 1) {
-        morseCode += '.';
-    } else {
-        // Определяем, является ли каждый интервал в пределах порога для тире
-        const isDashCombo = intervals.every(interval => interval < comboThreshold);
-        morseCode += isDashCombo ? '-' : '.';
-    }
-
-    console.log("Current Morse Code:", morseCode);
-    clickBuffer = []; // Сброс буфера после обработки
-}
-
-// Сброс буфера, если пользователь прекратил кликать
-function resetBuffer() {
-    if (clickBuffer.length && (Date.now() - clickBuffer[clickBuffer.length - 1] > resetThreshold)) {
-        processClicks();
-    }
-    setTimeout(resetBuffer, resetThreshold / 2); // Проверяем условие сброса периодически
-}
-
-resetBuffer();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+window.addEventListener('dblclick', function(event) {
+    event.preventDefault();
+}, { passive: false });
 
 document.addEventListener('selectstart', function(event) {
     event.preventDefault();
