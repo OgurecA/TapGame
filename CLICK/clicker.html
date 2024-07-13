@@ -260,14 +260,6 @@ const maxExperience = 10;
 let experienceAmount = 0;
 const telegramId = window.location.pathname.split('/')[1]; // Получение ID из URL
 
-const DOT_MAX_DURATION = 200;  // Максимальная длительность клика для "точки"
-const DASH_MIN_DURATION = 201; // Минимальная длительность клика для "тире"
-const SYMBOL_PAUSE = 2000;     // Максимальное время паузы между символами
-let lastClickTime = 0;
-let morseCode = '';
-let clickTimeout;
-
-
 
 document.addEventListener('DOMContentLoaded', function() {
     const telegramId = window.location.pathname.split('/')[1]; // Получение ID пользователя из URL
@@ -333,7 +325,7 @@ setInterval(async () => {
     } catch (error) {
         console.error('Ошибка при сохранении данных:', error);
     }
-}, 20000); // Интервал сохранения - 2000 мс (2 секунды)
+}, 2000); // Интервал сохранения - 2000 мс (2 секунды)
 
 
 
@@ -383,13 +375,14 @@ setInterval(() => {
         fatigueLevel++;
         updateFatigueBar();
     }
-}, 500);  // Каждые 3000 мс (3 секунды)
+}, 60000);  // Каждые 3000 мс (3 секунды)
 
 document.getElementById('boxer').addEventListener('click', function() {
     if (fatigueLevel > 0) {
         increaseCount();
         increaseExperience();
     }
+	console.log('click');
     this.classList.add('enlarge');
     setTimeout(() => {
         this.classList.remove('enlarge');
@@ -404,36 +397,6 @@ window.addEventListener('dblclick', function(event) {
 document.addEventListener('selectstart', function(event) {
     event.preventDefault();
 }, false);
-
-
-
-
-
-document.getElementById('boxer').addEventListener('mousedown', function() {
-    lastClickTime = Date.now(); // Засекаем время начала клика
-});
-
-document.getElementById('boxer').addEventListener('mouseup', function() {
-    const clickDuration = Date.now() - lastClickTime; // Вычисляем длительность клика
-    if (clickDuration < DOT_MAX_DURATION) {
-        morseCode += '.';
-    } else if (clickDuration >= DASH_MIN_DURATION) {
-        morseCode += '-';
-    }
-    processMorseCode();
-});
-
-function processMorseCode() {
-    clearTimeout(clickTimeout); // Очищаем предыдущий таймаут
-    clickTimeout = setTimeout(() => {
-        console.log("Morse Code:", morseCode); // Выводим полный код Морзе в консоль
-        morseCode = ''; // Сбрасываем код после обработки
-    }, SYMBOL_PAUSE);
-}
-
-
-
-
 
 
 
