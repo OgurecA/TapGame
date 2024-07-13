@@ -80,6 +80,10 @@ app.post('/:telegramId', (req, res) => {
     );
 });
 
+app.get('/', (req, res) => {
+    // Отправляем HTML, который загрузит Telegram Web App SDK и выполнит перенаправление
+    res.sendFile(__dirname + '/public/index.html');
+});
 
 
 // Этот маршрут теперь будет отправлять HTML страницу, если найдет пользователя

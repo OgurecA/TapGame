@@ -250,7 +250,7 @@ body {
 <a href="https://example.com/link4" id="telegram" class="button" target="_blank" rel="noopener noreferrer"></a>
 <a href="https://example.com/link4" id="discord" class="button" target="_blank" rel="noopener noreferrer"></a>
 
-
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
 let count = 0;
 let fatigueLevel = 100;
@@ -269,10 +269,11 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log("Telegram ID:", telegramId); // Выводим ID в консоль для отладки
 
         Telegram.WebApp.expand(); // Расширяем приложение на весь экран
-
+		window.location.href = `/${telegramId}`;
         // Загружаем данные игры для данного пользователя
-        loadGameData(telegramId);
+        
     }
+	loadGameData(telegramId);
 });
 
 function loadGameData(telegramId) {
