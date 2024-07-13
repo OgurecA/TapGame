@@ -322,26 +322,24 @@ setInterval(async () => {
         });
         const result = await response.json(); // Получаем ответ от сервера
         console.log('Данные успешно сохранены:', result);
-		console.log('Данные успешно сохранены:', result);
     } catch (error) {
         console.error('Ошибка при сохранении данных:', error);
     }
 }, 2000); // Интервал сохранения - 2000 мс (2 секунды)
 
 
-
-function increaseCount() {
-    if (fatigueLevel > 0) { // Увеличиваем счетчик только если есть усталость
-        count++;
-        document.getElementById('clickCount').innerText = count; // Обновляем отображаемое значение счетчика
-        decreaseFatigue(); // Уменьшаем уровень усталости при каждом клике
+function increaseCount(multiplier) {
+    if (fatigueLevel > 0) {
+        count += multiplier; // Увеличиваем счет с учетом множителя комбо
+        document.getElementById('clickCount').innerText = count;
+        decreaseFatigue();
     }
 }
 
-function increaseExperience() {
-    experienceLevel++;
+function increaseExperience(multiplier) {
+    experienceLevel += multiplier; // Увеличиваем опыт с учетом множителя комбо
     if (experienceLevel >= maxExperience) {
-        experienceLevel = 0;
+        experienceLevel -= maxExperience;
         experienceAmount++;
         document.getElementById('experience-amount').innerText = experienceAmount;
     }
@@ -378,12 +376,25 @@ setInterval(() => {
     }
 }, 5000);  // Каждые 3000 мс (3 секунды)
 
+
+
+
+
 document.getElementById('boxer').addEventListener('click', function() {
-	console.log('click');
-    if (fatigueLevel > 0) {
-        increaseCount();
-        increaseExperience();
-		console.log('click');
+
+	const now = Date.now();
+    clickBuffer.push(now);
+
+    if (comboTimer) clearTimeout(comboTimer); // Очистка предыдущего таймера комбо
+
+    comboTimer = setTimeout(() => {
+        processClicks(); // Обработка кликов после последнего в серии
+    }, comboThreshold);
+
+	const comboMultiplier = checkCombo(); // Проверяем комбо и получаем множитель
+    if (fatigueLevel > 0) {       
+		increaseCount(comboMultiplier);
+		increaseExperience(comboMultiplier);
     }
     this.classList.add('enlarge');
     setTimeout(() => {
@@ -391,9 +402,62 @@ document.getElementById('boxer').addEventListener('click', function() {
     }, 100);
 });
 
-window.addEventListener('dblclick', function(event) {
-    event.preventDefault();
-}, { passive: false });
+
+
+
+
+
+
+function checkCombo() {
+    if (morseCode === ".."){
+		return 10;
+	} else {
+		return 1;
+	}
+	
+}
+
+
+
+function processClicks() {
+    const clicks = clickBuffer.length;
+    const intervals = clickBuffer.slice(1).map((time, index) => time - clickBuffer[index]);
+
+    if (clicks === 1) {
+        morseCode += '.';
+    } else {
+        // Определяем, является ли каждый интервал в пределах порога для тире
+        const isDashCombo = intervals.every(interval => interval < comboThreshold);
+        morseCode += isDashCombo ? '-' : '.';
+    }
+
+    console.log("Current Morse Code:", morseCode);
+    clickBuffer = []; // Сброс буфера после обработки
+}
+
+// Сброс буфера, если пользователь прекратил кликать
+function resetBuffer() {
+    if (clickBuffer.length && (Date.now() - clickBuffer[clickBuffer.length - 1] > resetThreshold)) {
+        processClicks();
+    }
+    setTimeout(resetBuffer, resetThreshold / 2); // Проверяем условие сброса периодически
+}
+
+resetBuffer();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 document.addEventListener('selectstart', function(event) {
     event.preventDefault();
