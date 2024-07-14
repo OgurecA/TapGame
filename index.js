@@ -69,14 +69,14 @@ app.post('/hook', async (req, res) => {
     console.log(req.body); // Логируем входящий запрос для отладки
 
     if (req.body.message && req.body.message.chat && req.body.message.text) {
-        const chatId = req.body.message.chat.id;
+        const telegramId = req.body.message.chat.id;
         const text = req.body.message.text;
 
-        console.log("User ID:", chatId); // Лучше логировать chatId, поскольку это идентификатор чата, а не userId
+        console.log("User ID:", telegramId); // Лучше логировать chatId, поскольку это идентификатор чата, а не userId
 
         // Логика ответа на команду /start
         if (text === '/start') {
-            await sendMessage(chatId, 'Привет, это ваш Telegram бот!'); // Отправляем приветственное сообщение
+            await sendMessage('Привет, это ваш Telegram бот!'); // Отправляем приветственное сообщение
         }
 
         res.status(200).send('Received');
@@ -89,7 +89,7 @@ async function sendMessage(chatId, text) {
     const token = '7426292134:AAF0lGQa32nn5M8c4WuK8PYvB1CVhHA7qH8'; // Убедитесь, что ваш токен корректен и сохранён безопасно
     const url = `https://api.telegram.org/bot${token}/sendMessage`;
     const payload = {
-        chat_id: chatId,
+        chat_id: telegramId,
         text: text,
     };
 

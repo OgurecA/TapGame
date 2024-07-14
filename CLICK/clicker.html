@@ -263,8 +263,6 @@ let telegramId;
 document.addEventListener('DOMContentLoaded', function() {
     if (window.Telegram && window.Telegram.WebApp) {
         Telegram.WebApp.ready().then(() => {
-            const telegramId = Telegram.WebApp.init().user.id;
-            console.log("Telegram ID:", telegramId);
             Telegram.WebApp.expand();
             loadGameData(telegramId);
         });
