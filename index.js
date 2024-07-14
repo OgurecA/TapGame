@@ -10,6 +10,8 @@ const port = process.env.PORT || 3000;
 const fs = require('fs'); // Добавьте эту строку в начало файла
 const bodyParser = require('body-parser');
 
+let lastTelegramId = null;
+
 //export TELEGRAM_BOT_TOKEN='7426292134:AAF0lGQa32nn5M8c4WuK8PYvB1CVhHA7qH8'
 
 
@@ -76,6 +78,8 @@ app.post('/hook', async (req, res) => {
         console.log("Chat ID:", chatId);
         console.log("Telegram ID:", telegramId);
 		
+		lastTelegramId = telegramId;
+		
         // Логика ответа на команду /start
         if (text === '/start') {
             await sendMessage(chatId, 't.me/ABoogieWoogieBot/BoxingL');
@@ -87,6 +91,19 @@ app.post('/hook', async (req, res) => {
         res.status(400).send('Bad Request');
     }
 });
+
+
+app.get('/hook', (req, res) => {
+    if (lastTelegramId) {
+        res.redirect(`https://boxinglab.online/${lastTelegramId}`);
+        lastTelegramId = null; // Очищаем ID после редиректа
+    } else {
+        res.status(404).send('No telegram ID available');
+    }
+});
+
+
+
 
 async function sendMessage(chatId, text) {
     const token = '7426292134:AAF0lGQa32nn5M8c4WuK8PYvB1CVhHA7qH8'; // Убедитесь, что ваш токен корректен и сохранён безопасно
