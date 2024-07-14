@@ -70,11 +70,14 @@ app.post('/hook', async (req, res) => {
 
     if (req.body.message && req.body.message.chat && req.body.message.text) {
         const chatId = req.body.message.chat.id;
+		const userId = req.body.message.from.id;
         const text = req.body.message.text;
+
+		console.log("User ID:", userId);
 
         // Логика ответа на команду /start
         if (text === '/start') {
-            await sendMessage(chatId, 'Привет, это ваш Telegram бот!');
+            await sendMessage(userId);
         }
 
         res.status(200).send('Received');
