@@ -83,7 +83,7 @@ app.post('/hook', async (req, res) => {
 
 
 async function sendMessage(chatId, text) {
-    const url = `https://api.telegram.org/bot<YOUR_BOT_TOKEN>/sendMessage`;
+    const url = `https://api.telegram.org/bot7426292134:AAF0lGQa32nn5M8c4WuK8PYvB1CVhHA7qH8/sendMessage`;
     const payload = {
         chat_id: chatId,
         text: text,
