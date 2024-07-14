@@ -66,40 +66,27 @@ function getUserData(telegramId, callback) {
 }
 
 
-
 app.post('/hook', async (req, res) => {
-    console.log(req.body); // Логируем входящий запрос для отладки
-
+	console.log(req.body);
     if (req.body.message && req.body.message.chat && req.body.message.text) {
         const chatId = req.body.message.chat.id;
-        const telegramId = req.body.message.from.id; // Получаем ID пользователя
+		const telegramId = chatId;
+        const userId = req.body.message.from.id; // Получаем ID пользователя
         const text = req.body.message.text;
 
-        console.log("Chat ID:", chatId);
-        console.log("Telegram ID:", telegramId);
-		
-		lastTelegramId = telegramId;
-		
         // Логика ответа на команду /start
         if (text === '/start') {
-            await sendMessage(chatId, 't.me/ABoogieWoogieBot/BoxingL');
-            // Перенаправление сразу после отправки сообщения
+            // Редирект на GET с передачей userId
+            res.redirect(`/${telegramId}`);
+        } else {
+            res.status(200).send('Received');
         }
-
-        res.status(200).send('Received');
     } else {
         res.status(400).send('Bad Request');
     }
 });
 
 
-app.get('/hook', (req, res) => {
-    if (lastTelegramId) {
-        res.redirect(`https://boxinglab.online/${lastTelegramId}`);
-    } else {
-        res.status(404).send('No telegram ID available');
-    }
-});
 
 
 
