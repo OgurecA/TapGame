@@ -79,7 +79,8 @@ app.post('/hook', async (req, res) => {
         // Логика ответа на команду /start
         if (text === '/start') {
             await sendMessage(chatId, 'Привет, это ваш Telegram бот!');
-			res.redirect(`/${telegramId}`);
+            // Перенаправление сразу после отправки сообщения
+            return res.redirect(`/${telegramId}`);
         }
 
         res.status(200).send('Received');
