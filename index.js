@@ -8,6 +8,7 @@ const cors = require('cors');
 const path = require('path');
 const port = process.env.PORT || 3000;
 const fs = require('fs'); // Добавьте эту строку в начало файла
+const bodyParser = require('body-parser');
 
 
 app.use(cors({
@@ -16,6 +17,7 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'] // Разрешает эти заголовки
 }));
 
+app.use(bodyParser.json());
 app.use(express.static('CLICK'));
 app.use(express.json());
 app.get('/favicon.ico', (req, res) => res.status(204)); // Отправляет статус 204 (No Content)
@@ -58,6 +60,61 @@ function getUserData(telegramId, callback) {
         }
     });
 }
+
+
+
+
+
+
+
+app.post('/hook', async (req, res) => {
+    console.log(req.body); // Логируем входящий запрос для отладки
+
+    const chatId = req.body.message.chat.id;
+    const text = req.body.message.text;
+
+    // Логика ответа на команду /start
+    if (text === '/start') {
+        await sendMessage(chatId, 'Привет, это ваш Telegram бот!');
+    }
+
+    res.status(200).send('Received');
+});
+
+
+async function sendMessage(chatId, text) {
+    const url = `https://api.telegram.org/bot<YOUR_BOT_TOKEN>/sendMessage`;
+    const payload = {
+        chat_id: chatId,
+        text: text,
+    };
+
+    try {
+        await axios.post(url, payload);
+    } catch (error) {
+        console.error('Error sending message:', error);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 app.post('/:telegramId', (req, res) => {
     console.log('Получен POST запрос для:', req.params.telegramId); // Логирование при получении запроса

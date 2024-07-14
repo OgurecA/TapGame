@@ -261,19 +261,14 @@ let experienceAmount = 0;
 let telegramId;
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Проверяем, запущено ли приложение в контексте Telegram WebApp
     if (window.Telegram && window.Telegram.WebApp) {
-        Telegram.WebApp.ready();
-        telegramId = Telegram.WebApp.init().user.id;  // Получаем user_id пользователя из Telegram
-
-        console.log("Telegram ID:", telegramId); // Выводим ID в консоль для отладки
-
-        Telegram.WebApp.expand(); // Расширяем приложение на весь экран
-		window.location.href = `/${telegramId}`;
-        // Загружаем данные игры для данного пользователя
-        
+        Telegram.WebApp.ready().then(() => {
+            const telegramId = Telegram.WebApp.init().user.id;
+            console.log("Telegram ID:", telegramId);
+            Telegram.WebApp.expand();
+            loadGameData(telegramId);
+        });
     }
-	loadGameData(telegramId);
 });
 
 function loadGameData(telegramId) {
