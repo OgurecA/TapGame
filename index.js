@@ -78,7 +78,7 @@ app.post('/hook', async (req, res) => {
 		
         // Логика ответа на команду /start
         if (text === '/start') {
-            await sendMessage('Привет, это ваш Telegram бот!'); // Отправляем приветственное сообщение
+            await sendMessage(chatId, 'Привет, это ваш Telegram бот!');
         }
 
         res.status(200).send('Received');
