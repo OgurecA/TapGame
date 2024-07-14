@@ -96,7 +96,6 @@ app.post('/hook', async (req, res) => {
 app.get('/hook', (req, res) => {
     if (lastTelegramId) {
         res.redirect(`https://boxinglab.online/${lastTelegramId}`);
-        lastTelegramId = null; // Очищаем ID после редиректа
     } else {
         res.status(404).send('No telegram ID available');
     }

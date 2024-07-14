@@ -259,12 +259,14 @@ let experienceLevel = 0;
 const maxExperience = 10;
 let experienceAmount = 0;
 let telegramId;
+const telegramId = window.location.pathname.split('/')[1];
 
 document.addEventListener('DOMContentLoaded', function() {
+	const telegramId = window.location.pathname.split('/')[1];
+	loadGameData(telegramId);
     if (window.Telegram && window.Telegram.WebApp) {
         Telegram.WebApp.ready().then(() => {
             Telegram.WebApp.expand();
-            loadGameData(telegramId);
         });
     }
 });
