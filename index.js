@@ -10,6 +10,8 @@ const port = process.env.PORT || 3000;
 const fs = require('fs'); // Добавьте эту строку в начало файла
 const bodyParser = require('body-parser');
 
+export TELEGRAM_BOT_TOKEN='7426292134:AAF0lGQa32nn5M8c4WuK8PYvB1CVhHA7qH8'
+
 
 app.use(cors({
     origin: '*', // Разрешает запросы с любого домена
