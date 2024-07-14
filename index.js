@@ -63,39 +63,38 @@ function getUserData(telegramId, callback) {
 
 
 
-
-
-
-
 app.post('/hook', async (req, res) => {
     console.log(req.body); // Логируем входящий запрос для отладки
 
-    const chatId = req.body.message.chat.id;
-    const text = req.body.message.text;
+    if (req.body.message && req.body.message.chat && req.body.message.text) {
+        const chatId = req.body.message.chat.id;
+        const text = req.body.message.text;
 
-    // Логика ответа на команду /start
-    if (text === '/start') {
-        await sendMessage(chatId, 'Привет, это ваш Telegram бот!');
+        // Логика ответа на команду /start
+        if (text === '/start') {
+            await sendMessage(chatId, 'Привет, это ваш Telegram бот!');
+        }
+
+        res.status(200).send('Received');
+    } else {
+        res.status(400).send('Bad Request');
     }
-
-    res.status(200).send('Received');
 });
 
-
 async function sendMessage(chatId, text) {
-    const url = `https://api.telegram.org/bot7426292134:AAF0lGQa32nn5M8c4WuK8PYvB1CVhHA7qH8/sendMessage`;
+    const url = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`;
     const payload = {
         chat_id: chatId,
         text: text,
     };
 
     try {
-        await axios.post(url, payload);
+        const response = await axios.post(url, payload);
+        console.log('Message sent:', response.data);
     } catch (error) {
         console.error('Error sending message:', error);
     }
 }
-
 
 
 
