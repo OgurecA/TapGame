@@ -65,23 +65,22 @@ function getUserData(telegramId, callback) {
     });
 }
 
-
 app.post('/hook', async (req, res) => {
-	console.log(req.body);
-    if (req.body.message && req.body.message.chat && req.body.message.text) {
-        const chatId = req.body.message.chat.id;
-		const telegramId = chatId;
-        const userId = req.body.message.from.id; // Получаем ID пользователя
-        const text = req.body.message.text;
+    console.log(req.body);
+    if (req.body.callback_query) {
+        const query = req.body.callback_query;
+        const telegramId = query.message.chat.id;
+        const data = query.data; // Получаем данные, отправленные с кнопки
 
-        // Логика ответа на команду /start
-        if (text === '/start') {
-            // Редирект на GET с передачей userId
-            res.redirect(`/${telegramId}`);
+        // Логика ответа на нажатие кнопки
+        if (data === 'play_game') {
+            // Перенаправление пользователя на игру
+            res.redirect(`https://boxinglab.online/${telegramId}`);
         } else {
-            res.status(200).send('Received');
+            res.status(200).send('Received callback query');
         }
     } else {
+        // Если получено что-то, что не callback_query, возвращаем 400 Bad Request
         res.status(400).send('Bad Request');
     }
 });
