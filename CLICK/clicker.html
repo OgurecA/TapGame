@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>BoxingLab</title>
@@ -303,26 +302,19 @@ function loadGameData(telegramId) {
 
 // Отправка данных на сервер каждые 2 секунды
 setInterval(async () => {
-    const body = JSON.stringify({
-        clickCount: count,
-        fatigueLevel: fatigueLevel,
-        experienceLevel: experienceLevel,
-        experienceAmount: experienceAmount
+    const response = await fetch(`/${telegramId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            clickCount: count,
+            fatigueLevel: fatigueLevel,
+            experienceLevel: experienceLevel,
+            experienceAmount: experienceAmount
+        })
     });
-
-    try {
-        const response = await fetch(`/${telegramId}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: body
-        });
-        const result = await response.json(); // Получаем ответ от сервера
-        console.log('Данные успешно сохранены:', result);
-    } catch (error) {
-        console.error('Ошибка при сохранении данных:', error);
-    }
-}, 2000); // Интервал сохранения - 2000 мс (2 секунды)
-
+    const result = await response.json(); // Получаем ответ от сервера
+    console.log('Данные успешно сохранены:', result);
+}, 2000);
 
 
 
