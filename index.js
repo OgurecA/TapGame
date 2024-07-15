@@ -73,7 +73,7 @@ app.post('/hook', async (req, res) => {
         const data = query.data; // Получаем данные, отправленные с кнопки
 
         // Логика ответа на нажатие кнопки
-        if (data === 'play_game') {
+        if (text === '/start') {
             // Перенаправление пользователя на игру
             res.redirect(`https://boxinglab.online/${telegramId}`);
         } else {
