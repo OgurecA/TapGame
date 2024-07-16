@@ -119,7 +119,7 @@ body {
     font-size: 100%;
 }
 
-#boxer {
+#beholder {
     z-index: 0;
     position: absolute;
     height: 60vh;
@@ -152,7 +152,7 @@ body {
     visibility: hidden;
 }
 
-#boxer.enlarge {
+#beholder.enlarge {
     transform: scale(1.2); /* Увеличиваем размер на 20% */
     transition: transform 0.2s ease;
 }
@@ -333,7 +333,6 @@ function increaseCount() {
     if (fatigueLevel > 0) { // Увеличиваем счетчик только если есть усталость
         count++;
         document.getElementById('clickCount').innerText = count; // Обновляем отображаемое значение счетчика
-        decreaseFatigue(); // Уменьшаем уровень усталости при каждом клике
     }
 }
 
@@ -381,6 +380,7 @@ document.getElementById('beholder').addEventListener('click', function() {
     if (fatigueLevel > 0) {
         increaseCount();
         increaseExperience();
+        decreaseFatigue(); // Уменьшаем уровень усталости при каждом клике
     }
     this.classList.add('enlarge');
     setTimeout(() => {
