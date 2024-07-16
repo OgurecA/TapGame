@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>BoxingLab</title>
+<title>Send</title>
 <style>
 @font-face {
     font-family: 'GraffitiFont';
@@ -220,12 +220,12 @@ body {
 </head>
 <body>
 <div class="clicker-game">
-    <img src="/slim.jpg" id="boxer" alt="Boxer">
+    <img src="/beholder.png" id="beholder">
 	<span id="clickCount">0</span>
 </div>
 <div id="slogan">
     <a href="https://example.com" target="_blank" rel="noopener noreferrer" class="slogan-link">
-        <p><i>Nahren Bednost</i></p>
+        <p><i>Send</i></p>
     </a>
 </div>
 <div id="fatigue-bar-container">
@@ -377,7 +377,7 @@ setInterval(() => {
     }
 }, 60000);  // Каждые 3000 мс (3 секунды)
 
-document.getElementById('boxer').addEventListener('click', function() {
+document.getElementById('beholder').addEventListener('click', function() {
     if (fatigueLevel > 0) {
         increaseCount();
         increaseExperience();
