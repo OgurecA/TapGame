@@ -250,7 +250,7 @@ body {
 <a href="https://example.com/link4" id="telegram" class="button" target="_blank" rel="noopener noreferrer"></a>
 <a href="https://example.com/link4" id="discord" class="button" target="_blank" rel="noopener noreferrer"></a>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
 <script>
 let count = 0;
 let fatigueLevel = 100;
@@ -258,14 +258,19 @@ const totalParts = 100;
 let experienceLevel = 0;
 const maxExperience = 10;
 let experienceAmount = 0;
+const telegramId = window.location.pathname.split('/')[1]; // Получение ID из URL
+
 
 document.addEventListener('DOMContentLoaded', function() {
-	const telegramId = window.location.pathname.split('/')[1];
-	loadGameData(telegramId);
+    const telegramId = window.location.pathname.split('/')[1]; // Получение ID пользователя из URL
+
+    // Запускаем загрузку данных игры
+    loadGameData(telegramId);
+
+    // Проверяем наличие и инициализируем Telegram WebApp
     if (window.Telegram && window.Telegram.WebApp) {
-        Telegram.WebApp.ready().then(() => {
-            Telegram.WebApp.expand();
-        });
+        Telegram.WebApp.ready();
+        Telegram.WebApp.expand();
     }
 });
 
@@ -302,19 +307,25 @@ function loadGameData(telegramId) {
 
 // Отправка данных на сервер каждые 2 секунды
 setInterval(async () => {
-    const response = await fetch(`/${telegramId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            clickCount: count,
-            fatigueLevel: fatigueLevel,
-            experienceLevel: experienceLevel,
-            experienceAmount: experienceAmount
-        })
+    const body = JSON.stringify({
+        clickCount: count,
+        fatigueLevel: fatigueLevel,
+        experienceLevel: experienceLevel,
+        experienceAmount: experienceAmount
     });
-    const result = await response.json(); // Получаем ответ от сервера
-    console.log('Данные успешно сохранены:', result);
-}, 2000);
+
+    try {
+        const response = await fetch(`/${telegramId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: body
+        });
+        const result = await response.json(); // Получаем ответ от сервера
+        console.log('Данные успешно сохранены:', result);
+    } catch (error) {
+        console.error('Ошибка при сохранении данных:', error);
+    }
+}, 2000); // Интервал сохранения - 2000 мс (2 секунды)
 
 
 
@@ -375,6 +386,7 @@ document.getElementById('boxer').addEventListener('click', function() {
     setTimeout(() => {
         this.classList.remove('enlarge');
     }, 100);
+	saveGameData();
 });
 
 window.addEventListener('dblclick', function(event) {

@@ -8,11 +8,6 @@ const cors = require('cors');
 const path = require('path');
 const port = process.env.PORT || 3000;
 const fs = require('fs'); // Добавьте эту строку в начало файла
-const bodyParser = require('body-parser');
-
-let lastTelegramId = null;
-
-//export TELEGRAM_BOT_TOKEN='7426292134:AAF0lGQa32nn5M8c4WuK8PYvB1CVhHA7qH8'
 
 
 app.use(cors({
@@ -21,7 +16,6 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'] // Разрешает эти заголовки
 }));
 
-app.use(bodyParser.json());
 app.use(express.static('CLICK'));
 app.use(express.json());
 app.get('/favicon.ico', (req, res) => res.status(204)); // Отправляет статус 204 (No Content)
@@ -65,77 +59,6 @@ function getUserData(telegramId, callback) {
     });
 }
 
-
-
-app.post('/hook', async (req, res) => {
-    console.log(req.body); // Логируем входящий запрос для отладки
-
-    if (req.body.message && req.body.message.chat && req.body.message.text) {
-        const chatId = req.body.message.chat.id;
-        const telegramId = req.body.message.from.id; // Получаем ID пользователя
-        const text = req.body.message.text;
-
-        console.log("Telegram ID:", telegramId);
-		
-		
-        // Логика ответа на команду /start
-        if (text === '/start') {
-            await sendMessage(chatId, 't.me/ABoogieWoogieBot/BoxingL');
-            // Перенаправление сразу после отправки сообщения
-        }
-
-        res.status(200).send('Received');
-    } else {
-        res.status(400).send('Bad Request');
-    }
-});
-
-
-app.get('/hook', (req, res) => {
-    if (lastTelegramId) {
-        res.redirect(`https://boxinglab.online/${TelegramId}`);
-    } else {
-        res.status(404).send('No telegram ID available');
-    }
-});
-
-
-
-
-async function sendMessage(chatId, text) {
-    const token = '7426292134:AAF0lGQa32nn5M8c4WuK8PYvB1CVhHA7qH8'; // Убедитесь, что ваш токен корректен и сохранён безопасно
-    const url = `https://api.telegram.org/bot${token}/sendMessage`;
-    const payload = {
-        chat_id: chatId,
-        text: text,
-    };
-
-    try {
-        const response = await axios.post(url, payload);
-        console.log('Message sent:', response.data);
-    } catch (error) {
-        console.error('Error sending message:', error);
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 app.post('/:telegramId', (req, res) => {
     console.log('Получен POST запрос для:', req.params.telegramId); // Логирование при получении запроса
     const telegramId = req.params.telegramId;
@@ -157,10 +80,6 @@ app.post('/:telegramId', (req, res) => {
     );
 });
 
-app.get('/', (req, res) => {
-    // Отправляем HTML, который загрузит Telegram Web App SDK и выполнит перенаправление
-    res.sendFile(__dirname + '/CLICK/clicker.html');
-});
 
 
 // Этот маршрут теперь будет отправлять HTML страницу, если найдет пользователя
@@ -192,7 +111,7 @@ app.get('/:telegramId', (req, res) => {
 });
 
 function calculateFatigueRecovery(fatigueLevel, lastTime) {
-    const recoveryRate = 240; // Скорость восстановления в час
+    const recoveryRate = 30; // Скорость восстановления в час
     const now = new Date();
     const lastUpdateDate = new Date(lastTime);
     const hoursPassed = (now - lastUpdateDate) / 3600000; // Прошедшие часы
