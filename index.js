@@ -131,7 +131,7 @@ app.get('/load/:telegramId', (req, res) => {
             const updatedFatigue = calculateFatigueRecovery(row.fatigueLevel, row.lastUpdated);
             const now = new Date().toISOString();
             db.run(
-                `UPDATE users SET fatigueLevel = ?, lastUpdated = ? WHERE telegramId = ?`,
+                `UPDATE users SET fatigueLevel = ?, lastTime = ? WHERE telegramId = ?`,
                 [updatedFatigue, now, telegramId],
                 (updateErr) => {
                     if (updateErr) {
